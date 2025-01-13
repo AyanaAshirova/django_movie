@@ -1,0 +1,9 @@
+
+<h4>Edit Avatar</h4>
+<form  method="post" enctype="multipart/form-data">
+	{% csrf_token %}
+<!--	{{ avatar_form.as_p }}-->
+	<img src="{{ user.profile.avatar.url }}" alt="Preview Image" id="preview-image" class="mb-2" class="rounded-circle" width="80">
+	<input type="file" id="image" name="avatar" onchange="previewImage()" >
+	<button type="submit" class="site-btn">Udate Profile Photo</button>
+</form>

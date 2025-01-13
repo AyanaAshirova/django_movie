@@ -1,0 +1,9 @@
+<div class="anime__details__form reply-comment-form">
+    <form method="post" action="{% url 'reply_comment' movie_id=movie.id parent_id=comment.id %}">
+        {% csrf_token %}
+    <!--    {{ reply_form.as_p }}-->
+        <textarea name="content" placeholder="Text your comment here.."></textarea>
+    <!--    <input type="hidden" name="parent_id" value="{{ comment.id }}">-->
+        <button type="submit"><i class="fa fa-location-arrow"></i></button>
+    </form>
+</div>

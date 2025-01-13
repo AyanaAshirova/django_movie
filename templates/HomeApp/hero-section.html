@@ -1,0 +1,24 @@
+ <!-- Hero Section Begin -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero__slider owl-carousel">
+                {% for mv in hero_movies %}
+                    <div class="hero__items set-bg" data-setbg="{{ mv.backdrop_path }}">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="hero__text">
+                                    {% for g in mv.genre_list %}
+                                        <div class="label">{{ g }}</div>
+                                     {% endfor %}
+                                    <h2>{{ mv.name }}</h2>
+                                    <p>{{ mv.tmdb.overview }}</p>
+                                    <a href="{% url 'movie_details' mv.id %}"><span>Watch Now</span> <i class="fa fa-angle-right"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    <!-- Hero Section End -->

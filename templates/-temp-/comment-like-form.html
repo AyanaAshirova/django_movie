@@ -1,0 +1,7 @@
+
+
+<form id="likeDislikeForm" method="post" action="{% url 'like-comment' i.id tmdbd.id %}">
+    {% csrf_token %}
+    <button type="submit" id="likeButton">
+    </button>
+</form>

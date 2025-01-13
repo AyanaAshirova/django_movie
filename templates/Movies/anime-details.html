@@ -1,0 +1,209 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+
+    {% load static %}
+
+    <!-- Breadcrumb Begin -->
+    <div class="breadcrumb-option">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="breadcrumb__links">
+                        <a href="./index.html"><i class="fa fa-home"></i> Home</a>
+                        <a href="./categories.html">Categories</a>
+                        <span>Romance</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Breadcrumb End -->
+
+    <!-- Anime Section Begin -->
+    <section class="anime-details spad">
+        <div class="container">
+            <div class="anime__details__content">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <div class="anime__details__pic set-bg" data-setbg="http://image.tmdb.org/t/p/original{{ tmdbd.poster_path }}">
+                            <div class="comment"><i class="fa fa-comments"></i> {{ movie.comments.count }}</div>
+                            <div class="view"><i class="fa fa-eye"></i> {{ movie.views }}</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-9">
+                        <div class="anime__details__text">
+                            <div class="anime__details__title">
+                                <h3>{{ tmdbd.title }}</h3>
+                                <span>{{ tmdbd.tagline }}</span>
+                            </div>
+                            <div class="anime__details__rating">
+                                <div class="rating">
+                                    <a href="#"><i class="fa fa-star"></i></a>
+                                    <a href="#"><i class="fa fa-star"></i></a>
+                                    <a href="#"><i class="fa fa-star"></i></a>
+                                    <a href="#"><i class="fa fa-star"></i></a>
+                                    <a href="#"><i class="fa fa-star-half-o"></i></a>
+                                </div>
+                                <span>1.029 Votes</span>
+                            </div>
+                            <p>
+                                {% if movie.discription %}
+                                    {{ movie.discription }}
+                                {% else %}
+                                    {{ tmdbd.overview }}
+                                {% endif %}
+                            </p>
+                            <div class="anime__details__widget">
+                                <div class="row">
+                                    <div class="col-lg-6 col-md-6">
+                                        <ul>
+                                            <li><span>Type:</span> Movie</li>
+                                            <li><span>Studios:</span>
+                                                {% for i in tmdbd.production_companies %}
+                                                    {{ i.name }},
+                                                {% endfor %}
+                                            </li>
+                                            <li><span>Release date:</span>{{ movie.release_date }}</li>
+                                            <li><span>Status:</span> {{ tmdbd.status }}</li>
+                                            <li><span>Genre:</span>
+                                                {% for i in tmdbd.genres %}
+                                                    {{ i.name }},
+                                                {% endfor %}
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-lg-6 col-md-6">
+                                        <ul>
+                                            <li><span>Scores:</span> 7.31 / 1,515</li>
+                                            <li><span>TMDB Rating:</span>{{ tmdbd.vote_average }}</li>
+                                            <li><span>Duration:</span> {{ tmdbd.runtime }}</li>
+                                            <li><span>Countries:</span>
+                                                {% for i in tmdbd.production_countries %}
+                                                    {{ i.name }},
+                                                {% endfor %}
+                                            </li>
+                                            <li><span>Views:</span> {{ movie.views }}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="anime__details__btn">
+                                <a href="#" class="follow-btn"><i class="fa fa-heart-o"></i> Follow</a>
+                                <a href="#" class="watch-btn"><span>Watch Now</span> <i
+                                    class="fa fa-angle-right"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            {% if torrents %}
+            <div class="row">
+                <div class="anime__details__review">
+                        <div class="section-title">
+                            <h5>Torrent Files</h5>
+                        </div>
+                        <div class="mx-auto">
+                            <div class="anime__details__text">
+                                <div class="anime__details__title">
+                                    <h3></h3>
+                                </div>
+                                <div class="anime__details__widget">
+                                    <ul style="list-style: none;">
+                                        {% for i in torrents %}
+                                            <li class="row" >
+                                                <p class="col-lg-1">{{ i.seeds }}</p>
+                                                <p class="col-lg-7" style="word-wrap: wrap">{{ i.title }}</p>
+                                                <span class="col-lg-1">{{ i.filesize }}</span>
+                                                <p class="col-lg-1">{{ i.is_trusted }}</p>
+                                                <a href="{{ i.magnetlink }}" class="follow-btn anime__details__btn col-lg-2">Download</a>
+                                            </li>
+                                            <hr>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+            {% endif %}
+
+            <div class="row">
+                <div class="col-lg-8 col-md-8">
+                    <div class="anime__details__form">
+                        <div class="section-title">
+                            <h5>Your Comment</h5>
+                        </div>
+                        {% include 'Comment/comment-form.html' %}
+                    </div>
+                    <div class="anime__details__review">
+                        <div class="section-title">
+                        {% if comments %}
+                            <h5>Reviews</h5>
+                        {% else %}
+                            <h5>No Comments</h5>
+                        {% endif %}
+                        </div>
+
+                        {% for comment in comments %}
+                            <div class="anime__review__item">
+                                <div class="anime__review__item__pic">
+                                    <img src="{{ comment.user.profile.avatar.url }}" alt="">
+                                </div>
+                                <div class="anime__review__item__text">
+                                    <h6>{{ comment.user.username }} - <span>{{ comment.created_at }}</span>
+                                    </h6>
+                                    <p>{{ comment.content }}</p>
+                                </div>
+                                <div class="anime__review__item__reply">
+                                    <button class="reply-btn site-btn" >Reply</button>
+                                    {% include 'Comment/reply-comment-form.html' %}
+
+                                </div>
+
+                                <div class="anime__replies">
+                                {% if comment.replies.all %}
+                                    {% for reply in comment.replies.all %}
+                                        <div class="anime__review__item anime__reply__item">
+                                            <div class="anime__review__item__pic">
+                                                <img src="{{ reply.user.profile.avatar.url }}" alt="">
+                                            </div>
+                                            <div class="anime__review__item__text">
+                                                <h6>{{ reply.user.username }} - <span>{{ reply.created_at }}</span>
+                                                </h6>
+                                                <p>{{ reply.content }}</p>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                </div>
+                    <div class="col-lg-4 col-md-4">
+                        <div class="anime__details__sidebar">
+                            <div class="section-title">
+                                <h5>you might like...</h5>
+                            </div>
+                             {% for i in tmdbr %}
+                                <div class="product__sidebar__view__item set-bg" data-setbg="http://image.tmdb.org/t/p/original{{ i.poster_path }}">
+                                    <div class="ep">{{ i.vote_average }}</div>
+                                    <div class="view"><i class="fa fa-eye"></i> 9141</div>
+                                    <h5><a href="{% url 'movie_details' i.id %}">{{ i.title }}</a></h5>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </section>
+    <!-- Anime Section End -->
+ 
+
+{% endblock %}
+
+
