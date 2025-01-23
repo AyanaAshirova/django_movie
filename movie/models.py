@@ -1,72 +1,104 @@
 from datetime import datetime
-
 from django.db import models
+from django.core.validators import FileExtensionValidator
 
+from slugify import slugify
 
+ROLE_CHOICES = [
+    ('actor', 'Актер'),
+    ('derctor', 'Режиссер'),
+    ('producer', 'Продюсер'),
+    ('writer', 'Сценарист'),
+    ('composer', 'Композитор'),
+    ('operator', 'Оператор')
+]
 
-class Movie(models.Model):
-    title = models.CharField(max_length=500)
-    genres = models.ManyToManyField('Genre', related_name='movies')
-    slug = models.SlugField(max_length=500)
-    premium = models.BooleanField(default=False)
-    discription = models.TextField(max_length=10000, null=True, blank=True)
-    image = models.ImageField(upload_to='images/', null=True, blank=True)
-
-    thumbnail_link = models.CharField(max_length=1000, null=True, blank=True)
-    background_image_link = models.CharField(max_length=1000, null=True, blank=True)
-    screen_shot = models.ImageField(upload_to='screenshots/', null=True, blank=True)
-    screen_shot_link = models.CharField(max_length=1000, null=True, blank=True)
-    movie_length = models.CharField(max_length=50, null=True, blank=True)
-    release_date = models.DateField(null=True, blank=True)
-    movie_rate = models.CharField(max_length=100, null=True, blank=True)
-    imdb_rating = models.CharField(max_length=100, null=True, blank=True)
-    movie_director = models.CharField(max_length=200, null=True, blank=True)
-    movie_actor = models.CharField(max_length=1000, null=True, blank=True)
-    movie_language = models.CharField(max_length=100, null=True, blank=True)
-    movie_subtitle = models.CharField(max_length=100, null=True, blank=True)
-    movie_type = models.CharField(max_length=200, null=True, blank=True)
-    movie_category = models.CharField(max_length=100, null=True, blank=True)
-    link_4k = models.CharField(max_length=1000, null=True, blank=True)
-    link_1920 = models.CharField(max_length=1000, null=True, blank=True)
-    link_720 = models.CharField(max_length=1000, null=True, blank=True)
-    size_4k = models.CharField(max_length=1000, null=True, blank=True)
-    size_1920 = models.CharField(max_length=1000, null=True, blank=True)
-    size_720 = models.CharField(max_length=1000, null=True, blank=True)
-    movie_link = models.TextField(max_length=10000, null=True, blank=True)
-    movie_online = models.TextField(max_length=1000, null=True, blank=True)
-    torent_link_4k = models.CharField(max_length=1000, null=True, blank=True)
-    torent_link_1920 = models.CharField(max_length=1000, null=True, blank=True)
-    torent_link_720 = models.CharField(max_length=1000, null=True, blank=True)
-    torent_file_link = models.FileField(upload_to='torent_movie', null=True, blank=True)
-
-    tmvdbid = models.IntegerField(null=True, blank=True)
-    date = models.DateTimeField(default=datetime.now)
-    views = models.PositiveIntegerField(default=0)
+class Role(models.Model):
+    name = models.CharField(max_length=20, verbose_name='Роль')
 
     def __str__(self):
         return self.name
+
+
+class Person(models.Model):
+    name = models.CharField(max_length=1000, verbose_name='Имя')
+    photo = models.ImageField(upload_to='persons/', verbose_name='Фотографии')
+    movies = models.ManyToManyField('Movie', related_name='movies', verbose_name='Фильмы')
+    roles = models.ManyToManyField(Role, verbose_name='Роли')
+
+    def __str__(self):
+        return self.name
+
+
+
+class PersonRole(models.Model):
+    person = models.ForeignKey(Person, related_name='Человек')
+    roles = models.ManyToManyField(Role, verbose_name='Роли')
+
+
+class Genre(models.Model):
+    name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.name
+    
+
+class Raiting(models.Model):
+    pass
+
+
+class Movie(models.Model):
+    title = models.CharField(max_length=100, verbose_name='Название')
+    genres = models.ManyToManyField(Genre, related_name='movies', verbose_name='Жанры')
+    slug = models.SlugField(max_length=120, blank=True, unique=True)
+    premium = models.BooleanField(default=False)
+    description = models.TextField(max_length=10000, null=True, blank=True, verbose_name='Описание')
+    movie_length = models.PositiveBigIntegerField(verbose_name='Длительность в минутах')
+    release_date = models.DateField(verbose_name='Дата выхода')
+    persons = models.ManyToManyField(PersonRole, verbose_name='Люди')
+    screen_shot = models.ImageField(upload_to='movies/screenshots/', null=True, blank=True, verbose_name='Кадры из фильма')
+    poster = models.ImageField(upload_to='movies/posters/', blank=True, default='default.jpg')
+    bg_photo = models.ImageField(upload_to='movies/bg_photos', blank=True, null=True)
+    price = models.PositiveBigIntegerField(null=True)
+
+    video_720 = models.FileField(
+        upload_to='movies/videos/720/', 
+        null=True, blank=True, 
+        validators=[FileExtensionValidator(allowed_extensions=['mp4'])]
+    )
+    video_1920 = models.FileField(
+        upload_to='movies/videos/1920/', 
+        null=True, blank=True, 
+        validators=[FileExtensionValidator(allowed_extensions=['mp4'])]
+    )
+    video_4k = models.FileField(
+        upload_to='movies/videos/4k/', 
+        null=True, blank=True, 
+        validators=[FileExtensionValidator(allowed_extensions=['mp4'])]
+    )
+    
+    created_at = models.DateField(auto_now_add=True)
+    views = models.PositiveIntegerField(default=0)
+
+    def get_duration_dispaly(self):
+        hours = self.movie_length // 60
+        min = self.movie_length % 60
+        return f'{hours}ч. {min}мин' if hours else f'{min}мин'
+
+    def get_rating(self):
+        pass
+
+    def __str__(self):
+        return f'{self.name} - {self.release_date}'
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super (Movie, self).save(*args, **kwargs)
 
     def snippet(self):
         return self.discription[:10]+'...'
 
-# ! Director, Actor, Sound, Subtitles,  Создатели:сценарист, Композитор, Оператор, Продюсер
-class Person(models.Model):
-    name = models.CharField(max_length=1000)
-    photo = models.ImageField(upload_to='persons/')
-    movies = models.ManyToManyField(Movie, related_name='movies')
-
-
-class PersonRule(models.Model):
-    name = models.CharField(max_length=1000)
-    movies = models.ManyToManyField(Movie, related_name='movies')
-
-
-class Genre(models.Model):
-    name = models.CharField(max_length=75)
-    tmvdbid = models.IntegerField(unique=True)
-
-    def __str__(self):
-        return self.name
 
 
 class NewTrailer(models.Model):
