@@ -3,6 +3,7 @@ from django.db import models
 from django.core.validators import FileExtensionValidator
 
 from slugify import slugify
+from .account.models import User
 
 ROLE_CHOICES = [
     ('actor', 'Актер'),
@@ -44,7 +45,16 @@ class Genre(models.Model):
     
 
 class Raiting(models.Model):
-    pass
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь')
+    movie = models.ForeignKey('Movie', on_delete=models.CASCADE, related_name='raitings', verbose_name='Фильм')
+    value = models.PositiveBigIntegerField(choices=[(i, i) for i in range(1, 11)], verbose_name='Оценка')
+
+    class Meta:
+        unique_together = ('user', 'movie')
+
+    def __str__(self):
+        return f'{self.user} - {self.movie} : {self.value}'
+
 
 
 class Movie(models.Model):
@@ -85,8 +95,11 @@ class Movie(models.Model):
         min = self.movie_length % 60
         return f'{hours}ч. {min}мин' if hours else f'{min}мин'
 
-    def get_rating(self):
-        pass
+    def average_rating(self):
+        raitings = self.raitings.all()
+        if raitings.exists():
+            return round(sum(raiting.value for raiting in raitings) / raitings.count(), 2)
+        return 0
 
     def __str__(self):
         return f'{self.name} - {self.release_date}'
