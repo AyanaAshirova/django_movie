@@ -37,11 +37,20 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'corsheaders',
-    'rest_framework',
-    'account',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
 
 ]
+
+SITE_ID = 1
+ACCOUNT_PASSWORD_MIN_LENGTH = 4
+ACCOUNT_PASSWORD_INPUT_RENDER_VALUE = True
+ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_AUTHENTICATION_METHOD = 'username'
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

@@ -8,8 +8,8 @@
             <div class="row">
                 <div class="col-lg-12 text-center">
                     <div class="normal__breadcrumb__text">
-                        <h2>Login</h2>
-                        <p>Welcome to the official Anime blog.</p>
+                        <h2>Вход</h2>
+                        <p>Добро пожаловать в Watch Movie!</p>
                     </div>
                 </div>
             </div>
@@ -23,27 +23,19 @@
             <div class="row">
                 <div class="col-lg-6">
                     <div class="login__form">
-                        <h3>Login</h3>
+                        <h3>Вход</h3>
                         <form action="" method="POST">
                             {% csrf_token %}
-                            {{ Login_form.as_p }}
-<!--                            <div class="input__item">-->
-<!--                                <input type="text" placeholder="Email address">-->
-<!--                                <span class="icon_mail"></span>-->
-<!--                            </div>-->
-<!--                            <div class="input__item">-->
-<!--                                <input type="text" placeholder="Password">-->
-<!--                                <span class="icon_lock"></span>-->
-<!--                            </div>-->
-                            <button type="submit" class="site-btn">Login Now</button>
+                            {{ form.as_p }}
+                            <button type="submit" class="site-btn">Зарегистрироваться</button>
                         </form>
-                        <a href="#" class="forget_pass">Forgot Your Password?</a>
+                        <a href="#" class="forget_pass">Забыли пароль?</a>
                     </div>
                 </div>
                 <div class="col-lg-6">
                     <div class="login__register">
-                        <h3>Dont’t Have An Account?</h3>
-                        <a href="/Account/register/" class="primary-btn">Register Now</a>
+                        <h3>Нет аккаунта?</h3>
+                        <a href="/аccount/register/" class="primary-btn">Зарегистрироваться</a>
                     </div>
                 </div>
             </div>
@@ -51,9 +43,9 @@
                 <div class="row d-flex justify-content-center">
                     <div class="col-lg-6">
                         <div class="login__social__links">
-                            <span>or</span>
+                            <span>или</span>
                             <ul>
-                                <li><a href="#" class="facebook"><i class="fa fa-facebook"></i> Sign in With
+                                <li><a href="#" class="facebook"><i class="fa fa-facebook"></i> Зарегистрироваться с:
                                 Facebook</a></li>
                                 <li><a href="#" class="google"><i class="fa fa-google"></i> Sign in With Google</a></li>
                                 <li><a href="#" class="twitter"><i class="fa fa-twitter"></i> Sign in With Twitter</a>
