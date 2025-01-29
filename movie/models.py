@@ -113,6 +113,10 @@ class Movie(models.Model):
         return self.discription[:10]+'...'
 
 
+class MovieFrame(models.Model):
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name='frames')
+    frame_image = models.ImageField(upload_to='frames/')
+
 
 class NewTrailer(models.Model):
     title = models.CharField(max_length=1000, null=True, blank=True)
@@ -129,9 +133,6 @@ class NewTrailer(models.Model):
         return self.discription[:70] + '...'
 
 
-class MovieFrame(models.Model):
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name='frames')
-    frame_image = models.ImageField(upload_to='frames/')
 
 # class SeriesModel(models.Model):
 #     name = models.CharField(max_length=500)
