@@ -3,7 +3,7 @@ from django.db import models
 from django.core.validators import FileExtensionValidator
 
 from slugify import slugify
-from .account.models import User
+from django.contrib.auth.models import User
 
 ROLE_CHOICES = [
     ('actor', 'Актер'),
@@ -24,16 +24,15 @@ class Role(models.Model):
 class Person(models.Model):
     name = models.CharField(max_length=1000, verbose_name='Имя')
     photo = models.ImageField(upload_to='persons/', verbose_name='Фотографии')
-    movies = models.ManyToManyField('Movie', related_name='movies', verbose_name='Фильмы')
+    movies = models.ManyToManyField('Movie', related_name='person', verbose_name='Фильмы')
     roles = models.ManyToManyField(Role, verbose_name='Роли')
 
     def __str__(self):
         return self.name
 
 
-
 class PersonRole(models.Model):
-    person = models.ForeignKey(Person, related_name='Человек')
+    person = models.ForeignKey(Person, related_name='roles', verbose_name='Человек')
     roles = models.ManyToManyField(Role, verbose_name='Роли')
 
 
@@ -47,7 +46,7 @@ class Genre(models.Model):
 class Raiting(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь')
     movie = models.ForeignKey('Movie', on_delete=models.CASCADE, related_name='raitings', verbose_name='Фильм')
-    value = models.PositiveBigIntegerField(choices=[(i, i) for i in range(1, 11)], verbose_name='Оценка')
+    value = models.PositiveBigIntegerField(choices=[1, 2, 3, 4, 5, 6 ,7 ,8, 9, 10], verbose_name='Оценка')
 
     class Meta:
         unique_together = ('user', 'movie')
@@ -56,21 +55,38 @@ class Raiting(models.Model):
         return f'{self.user} - {self.movie} : {self.value}'
 
 
+class MovieFrame(models.Model):
+    movie = models.ForeignKey('Movie', on_delete=models.CASCADE, related_name='frames')
+    image = models.ImageField(upload_to='frames/')
+
+
+class MovieViews(models.Model):
+    user = models.ForeignKey(User, related_name='history')
+    movie = models.ForeignKey('Movie', on_delete=models.CASCADE, related_name='views')
+
+    class Meta:
+        unique_together = ('user', 'movie')
+
 
 class Movie(models.Model):
     title = models.CharField(max_length=100, verbose_name='Название')
-    genres = models.ManyToManyField(Genre, related_name='movies', verbose_name='Жанры')
-    slug = models.SlugField(max_length=120, blank=True, unique=True)
+    release_date = models.DateField(verbose_name='Дата выхода')
     premium = models.BooleanField(default=False)
+    price = models.PositiveBigIntegerField(null=True)
+    poster = models.ImageField(upload_to='movies/posters/', blank=True, default='default.jpg')
+    genres = models.ManyToManyField(Genre, related_name='movies', verbose_name='Жанры')
     description = models.TextField(max_length=10000, null=True, blank=True, verbose_name='Описание')
     movie_length = models.PositiveBigIntegerField(verbose_name='Длительность в минутах')
-    release_date = models.DateField(verbose_name='Дата выхода')
-    persons = models.ManyToManyField(PersonRole, verbose_name='Люди')
-    screen_shot = models.ImageField(upload_to='movies/screenshots/', null=True, blank=True, verbose_name='Кадры из фильма')
-    poster = models.ImageField(upload_to='movies/posters/', blank=True, default='default.jpg')
+    persons = models.ManyToManyField(PersonRole, verbose_name='Люди', related_name='movies')
+    frames = models.ManyToManyField(MovieFrame, null=True, blank=True, verbose_name='Кадры из фильма', related_name='movie')
     bg_photo = models.ImageField(upload_to='movies/bg_photos', blank=True, null=True)
-    price = models.PositiveBigIntegerField(null=True)
+    trailer_url = models.URLField(verbose_name='Ссылка на трейлер')
 
+    video_360 = models.FileField(
+        upload_to='movies/videos/360/', 
+        null=True, blank=True, 
+        validators=[FileExtensionValidator(allowed_extensions=['mp4'])]
+    )
     video_720 = models.FileField(
         upload_to='movies/videos/720/', 
         null=True, blank=True, 
@@ -89,6 +105,8 @@ class Movie(models.Model):
     
     created_at = models.DateField(auto_now_add=True)
     views = models.PositiveIntegerField(default=0)
+    slug = models.SlugField(max_length=120, blank=True, unique=True)
+    rating = models.ForeignKey()
 
     def get_duration_dispaly(self):
         hours = self.movie_length // 60
@@ -102,35 +120,17 @@ class Movie(models.Model):
         return 0
 
     def __str__(self):
-        return f'{self.name} - {self.release_date}'
+        return f'{self.title} - {self.release_date}'
     
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.name)
+            self.slug = slugify(self.title)
         super (Movie, self).save(*args, **kwargs)
 
     def snippet(self):
-        return self.discription[:10]+'...'
+        return self.description[:17]+'...'
 
 
-class MovieFrame(models.Model):
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name='frames')
-    frame_image = models.ImageField(upload_to='frames/')
-
-
-class NewTrailer(models.Model):
-    title = models.CharField(max_length=1000, null=True, blank=True)
-    link = models.CharField(max_length=1500, null=True, blank=True)
-    discription = models.TextField(max_length=5000, null=True, blank=True)
-    image = models.ImageField(upload_to='trailer_image', null=True, blank=True)
-    image_link = models.CharField(max_length=1000, null=True, blank=True)
-    date = models.DateTimeField(default=datetime.now)
-
-    def __str__(self):
-        return self.title
-
-    def snipet(self):
-        return self.discription[:70] + '...'
 
 
 

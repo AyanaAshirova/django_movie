@@ -45,7 +45,7 @@ INSTALLED_APPS = [
 ]
 
 SITE_ID = 1
-ACCOUNT_PASSWORD_MIN_LENGTH = 4
+ACCOUNT_PASSWORD_MIN_LENGTH = 6
 ACCOUNT_PASSWORD_INPUT_RENDER_VALUE = True
 ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_EMAIL_REQUIRED = True
@@ -89,7 +89,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'movie_db',
         'USER': 'root',
         'PASSWORD': 'root',
