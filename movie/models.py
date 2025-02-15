@@ -24,15 +24,14 @@ class Role(models.Model):
 class Person(models.Model):
     name = models.CharField(max_length=1000, verbose_name='Имя')
     photo = models.ImageField(upload_to='persons/', verbose_name='Фотографии')
-    movies = models.ManyToManyField('Movie', related_name='person', verbose_name='Фильмы')
-    roles = models.ManyToManyField(Role, verbose_name='Роли')
+    movies = models.ManyToManyField('Movie', verbose_name='Фильмы', null=True)
 
     def __str__(self):
         return self.name
 
 
 class PersonRole(models.Model):
-    person = models.ForeignKey(Person, related_name='roles', verbose_name='Человек')
+    person = models.ForeignKey(Person, on_delete=models.DO_NOTHING, related_name='roles', verbose_name='Человек')
     roles = models.ManyToManyField(Role, verbose_name='Роли')
 
 
@@ -44,9 +43,11 @@ class Genre(models.Model):
     
 
 class Raiting(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь')
-    movie = models.ForeignKey('Movie', on_delete=models.CASCADE, related_name='raitings', verbose_name='Фильм')
-    value = models.PositiveBigIntegerField(choices=[1, 2, 3, 4, 5, 6 ,7 ,8, 9, 10], verbose_name='Оценка')
+    RATING_CHOICES = [(i, str(i)) for i in range(1, 11)]  # Создаем список (1, '1'), (2, '2'), ..., (10, '10')
+
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, verbose_name='Пользователь', related_name='raitngs')
+    movie = models.ForeignKey('Movie', on_delete=models.DO_NOTHING, related_name='raitings', verbose_name='Фильм')
+    value = models.IntegerField(choices=RATING_CHOICES, verbose_name='Оценка')
 
     class Meta:
         unique_together = ('user', 'movie')
@@ -61,24 +62,29 @@ class MovieFrame(models.Model):
 
 
 class MovieViews(models.Model):
-    user = models.ForeignKey(User, related_name='history')
-    movie = models.ForeignKey('Movie', on_delete=models.CASCADE, related_name='views')
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name='history')
+    movie = models.ForeignKey('Movie', on_delete=models.DO_NOTHING, related_name='views')
 
     class Meta:
         unique_together = ('user', 'movie')
 
+class Country(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
 
 class Movie(models.Model):
     title = models.CharField(max_length=100, verbose_name='Название')
     release_date = models.DateField(verbose_name='Дата выхода')
+    country = models.ForeignKey(Country, on_delete=models.DO_NOTHING, related_name='movies')
     premium = models.BooleanField(default=False)
     price = models.PositiveBigIntegerField(null=True)
     poster = models.ImageField(upload_to='movies/posters/', blank=True, default='default.jpg')
-    genres = models.ManyToManyField(Genre, related_name='movies', verbose_name='Жанры')
+    genres = models.ManyToManyField(Genre, verbose_name='Жанры')
     description = models.TextField(max_length=10000, null=True, blank=True, verbose_name='Описание')
     movie_length = models.PositiveBigIntegerField(verbose_name='Длительность в минутах')
-    persons = models.ManyToManyField(PersonRole, verbose_name='Люди', related_name='movies')
-    frames = models.ManyToManyField(MovieFrame, null=True, blank=True, verbose_name='Кадры из фильма', related_name='movie')
+    persons = models.ManyToManyField(PersonRole, verbose_name='Люди')
     bg_photo = models.ImageField(upload_to='movies/bg_photos', blank=True, null=True)
     trailer_url = models.URLField(verbose_name='Ссылка на трейлер')
 
@@ -104,9 +110,8 @@ class Movie(models.Model):
     )
     
     created_at = models.DateField(auto_now_add=True)
-    views = models.PositiveIntegerField(default=0)
+    all_views = models.PositiveIntegerField(default=0)
     slug = models.SlugField(max_length=120, blank=True, unique=True)
-    rating = models.ForeignKey()
 
     def get_duration_dispaly(self):
         hours = self.movie_length // 60
@@ -129,6 +134,25 @@ class Movie(models.Model):
 
     def snippet(self):
         return self.description[:17]+'...'
+    
+
+
+class Subscription(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='subscription', verbose_name='Пользователь')
+    start_date = models.DateField(auto_now_add=True, verbose_name='Дата начала')
+    end_date = models.DateField(verbose_name='Дата окончания')
+
+
+class Purchase(models.Model):
+    user = models.ForeignKey(User, related_name='purchases', on_delete=models.CASCADE)
+    movie = models.ForeignKey(Movie,related_name='purchases', on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now_add=True, verbose_name='Дата покупки')
+
+    class Meta:
+        unique_together = ('user', 'movie')
+
+
+
 
 
 

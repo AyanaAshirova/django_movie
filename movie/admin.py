@@ -1,9 +1,14 @@
 from django.contrib import admin
 
-from .models import Movies, NewTrailer, SeriesModel, season, Genre
+from .models import *
 
-admin.site.register(Movies)
-admin.site.register(NewTrailer)
-admin.site.register(SeriesModel)
-admin.site.register(season)
+admin.site.register(Movie)
 admin.site.register(Genre)
+admin.site.register(Country)
+admin.site.register(Person)
+admin.site.register(Role)
+admin.site.register(PersonRole)
+admin.site.register(Purchase)
+admin.site.register(Subscription)
+admin.site.register(Raiting)
+

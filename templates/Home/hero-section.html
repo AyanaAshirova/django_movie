@@ -2,16 +2,16 @@
     <section class="hero">
         <div class="container">
             <div class="hero__slider owl-carousel">
-                {% for mv in hero_movies %}
+                {% for mv in movies %}
                     <div class="hero__items set-bg" data-setbg="{{ mv.backdrop_path }}">
                         <div class="row">
                             <div class="col-lg-6">
                                 <div class="hero__text">
-                                    {% for g in mv.genre_list %}
-                                        <div class="label">{{ g }}</div>
+                                    {% for g in mv.genre %}
+                                        <div class="label">{{ g.name }}</div>
                                      {% endfor %}
-                                    <h2>{{ mv.name }}</h2>
-                                    <p>{{ mv.tmdb.overview }}</p>
+                                    <h2>{{ mv.title }}</h2>
+                                    <p>{{ mv.description }}</p>
                                     <a href="{% url 'movie_details' mv.id %}"><span>Watch Now</span> <i class="fa fa-angle-right"></i></a>
                                 </div>
                             </div>

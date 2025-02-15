@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-
+    'movie',
 ]
 
 SITE_ID = 1
@@ -91,7 +91,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'movie_db',
-        'USER': 'root',
+        'USER': 'postgres',
         'PASSWORD': 'root',
         'HOST': 'localhost',
         'PORT': '5432',
