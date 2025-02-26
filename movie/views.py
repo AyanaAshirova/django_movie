@@ -7,8 +7,8 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, TemplateView
 
-
 from .models import *
+
 
 class HomePage(TemplateView):
     template_name = 'Home/index.html'
@@ -17,7 +17,6 @@ class HomePage(TemplateView):
         contex =  super().get_context_data(**kwargs)
         
         contex['movies'] = Movie.objects.all()[:6]
-
         return contex
 
 

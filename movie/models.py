@@ -58,7 +58,7 @@ class Raiting(models.Model):
 
 class MovieFrame(models.Model):
     movie = models.ForeignKey('Movie', on_delete=models.CASCADE, related_name='frames')
-    image = models.ImageField(upload_to='frames/')
+    image = models.ImageField(upload_to='movie/frames/')
 
 
 class MovieViews(models.Model):
@@ -85,7 +85,7 @@ class Movie(models.Model):
     description = models.TextField(max_length=10000, null=True, blank=True, verbose_name='Описание')
     movie_length = models.PositiveBigIntegerField(verbose_name='Длительность в минутах')
     persons = models.ManyToManyField(PersonRole, verbose_name='Люди')
-    bg_photo = models.ImageField(upload_to='movies/bg_photos', blank=True, null=True)
+    bg_photo = models.ImageField(upload_to='movies/bg_photos',default='default.jpg', blank=True, null=True)
     trailer_url = models.URLField(verbose_name='Ссылка на трейлер')
 
     video_360 = models.FileField(

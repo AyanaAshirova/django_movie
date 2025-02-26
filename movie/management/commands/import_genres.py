@@ -1,29 +1,29 @@
 import os
 
 from django.core.management.base import BaseCommand
-from tmdbv3api import TMDb, Genre as TMDbGenre
-from Movies.models import Genre
+from movie.models import Genre
+
+
+genre_list = ['Комедия','Мультфильм','Ужас','Фантастика','Триллер','Боевик','Мелодрама','Детектив','Приключение','Фэнтези','Военный','Семейный','Аниме','Исторический','Драма','Документальный','Криминал','Биография','Вестерн','Фильм-нуар','Спортивный','Короткометражка','Музыкальный','Мюзикл', 'Лайв-адаптация']
+# 'Ток-шоу'
+
 
 
 class Command(BaseCommand):
-    help = 'import TMDB genres to django database'
+    help = 'import genres to django database'
 
     def handle(self, *args, **options):
-        tmdb = TMDb()
-        # tmdb.api_key = os.getenv('TMDB_API_KEY')
-        tmdb.api_key = '9fa12374bfa1ee4104add97410cc9f5c'
+      
 
-        genre_api = TMDbGenre()
-        genres = genre_api.movie_list()
-
-        for g in genres:
+        for i in genre_list:
             genre, created = Genre.objects.get_or_create(
-                tmvdbid=g.id,
+                name = i
             )
 
             if created:
-                genre.name = g.name
+                genre.name = i.name
                 genre.save()
-                self.stdout.write(f'Genre is already exists: {g.name}')
             else:
-                self.stdout.write(self.style.SUCCESS(f'Genre created: {g.name}'))
+                self.stdout.write(f'Genre is already exists: {i}')
+
+        self.stdout.write(self.style.SUCCESS(f'Genre imported'))
