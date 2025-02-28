@@ -24,7 +24,7 @@ class Role(models.Model):
 class Person(models.Model):
     name = models.CharField(max_length=1000, verbose_name='Имя')
     photo = models.ImageField(upload_to='persons/', verbose_name='Фотографии')
-    movies = models.ManyToManyField('Movie', verbose_name='Фильмы', null=True)
+    movies = models.ManyToManyField('Movie', verbose_name='Фильмы', blank=True)
 
     def __str__(self):
         return self.name
@@ -42,11 +42,11 @@ class Genre(models.Model):
         return self.name
     
 
-class Raiting(models.Model):
+class Rating(models.Model):
     RATING_CHOICES = [(i, str(i)) for i in range(1, 11)]  # Создаем список (1, '1'), (2, '2'), ..., (10, '10')
 
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, verbose_name='Пользователь', related_name='raitngs')
-    movie = models.ForeignKey('Movie', on_delete=models.DO_NOTHING, related_name='raitings', verbose_name='Фильм')
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, verbose_name='Пользователь', related_name='ratings')
+    movie = models.ForeignKey('Movie', on_delete=models.DO_NOTHING, related_name='ratings', verbose_name='Фильм')
     value = models.IntegerField(choices=RATING_CHOICES, verbose_name='Оценка')
 
     class Meta:
@@ -80,7 +80,7 @@ class Movie(models.Model):
     country = models.ForeignKey(Country, on_delete=models.DO_NOTHING, related_name='movies')
     premium = models.BooleanField(default=False)
     price = models.PositiveBigIntegerField(null=True)
-    poster = models.ImageField(upload_to='movies/posters/', blank=True, default='default.jpg')
+    poster = models.ImageField(upload_to='movies/posters/', blank=True, null=True, default='default.jpg')
     genres = models.ManyToManyField(Genre, verbose_name='Жанры')
     description = models.TextField(max_length=10000, null=True, blank=True, verbose_name='Описание')
     movie_length = models.PositiveBigIntegerField(verbose_name='Длительность в минутах')
@@ -113,15 +113,15 @@ class Movie(models.Model):
     all_views = models.PositiveIntegerField(default=0)
     slug = models.SlugField(max_length=120, blank=True, unique=True)
 
-    def get_duration_dispaly(self):
+    def get_duration_display(self):
         hours = self.movie_length // 60
         min = self.movie_length % 60
         return f'{hours}ч. {min}мин' if hours else f'{min}мин'
 
     def average_rating(self):
-        raitings = self.raitings.all()
-        if raitings.exists():
-            return round(sum(raiting.value for raiting in raitings) / raitings.count(), 2)
+        ratings = self.ratings.all()
+        if ratings.exists():
+            return round(sum(rating.value for rating in ratings) / ratings.count(), 2)
         return 0
 
     def __str__(self):

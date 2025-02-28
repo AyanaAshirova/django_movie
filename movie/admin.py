@@ -10,5 +10,5 @@ admin.site.register(Role)
 admin.site.register(PersonRole)
 admin.site.register(Purchase)
 admin.site.register(Subscription)
-admin.site.register(Raiting)
+admin.site.register(Rating)
 

@@ -11,6 +11,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         countries = ['США', 'Франция', 'Германия', 'Япония', 'Россия', 'Китай']
         genres = ['Драма', 'Комедия', 'Боевик', 'Фантастика', 'Триллер', 'Анимация']
+        roles = ['Продюсер', 'Актер','Режиссер','Оператор' ]
 
         # Создание стран
         country_objects = {}
@@ -23,6 +24,11 @@ class Command(BaseCommand):
         for name in genres:
             genre, _ = Genre.objects.get_or_create(name=name)
             genre_objects[name] = genre
+
+        role_objects = {}
+        for name in roles:
+            role, _ = Role.objects.get_or_create(name=name)
+            role_objects[name] = role
 
         # Пример людей и ролей
         people_data = [
@@ -109,16 +115,18 @@ class Command(BaseCommand):
                 title=movie_data['title'],
                 defaults={
                     'release_date': datetime.strptime(movie_data['release_date'], '%Y-%m-%d').date(),
-                    'country__id': movie_data['country'],
                     'description': movie_data['description'],
                     'movie_length': movie_data['movie_length'],
                     'trailer_url': movie_data['trailer_url'],
+                    'premium': False,
                 }
             )
 
             if created:
+                movie.country = country_objects[movie_data['country']]
                 movie.genres.set([genre_objects[g] for g in movie_data['genres']])
                 movie.persons.set(movie_data['persons'])
+                print(movie)
                 movie.save()
                 self.stdout.write(self.style.SUCCESS(f"Movie imported: {movie.title}"))
             else:
