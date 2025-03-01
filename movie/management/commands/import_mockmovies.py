@@ -9,9 +9,9 @@ class Command(BaseCommand):
     help = 'Import mock movies to Django database'
 
     def handle(self, *args, **options):
-        countries = ['США', 'Франция', 'Германия', 'Япония', 'Россия', 'Китай']
-        genres = ['Драма', 'Комедия', 'Боевик', 'Фантастика', 'Триллер', 'Анимация']
-        roles = ['Продюсер', 'Актер','Режиссер','Оператор' ]
+        countries = ["Кыргызстан","США","Великобритания","Франция","Германия","Италия","Испания","Канада","Австралия","Япония","Южная Корея","Китай","Индия","Россия","Бразилия","Мексика","Швеция","Дания","Нидерланды","Новая Зеландия","Аргентина"] 
+        genres = ['Комедия','Мультфильм','Ужас','Фантастика','Триллер','Боевик','Мелодрама','Детектив','Приключение','Фэнтези','Военный','Семейный','Аниме','Исторический','Драма','Документальный','Криминал','Биография','Вестерн','Фильм-нуар','Спортивный','Короткометражка','Музыкальный','Мюзикл', 'Лайв-адаптация']
+        roles = ['продюсер','режиссёр','оператор','композитор','специалист по освещению','художник-постановщик','декоратор','гримёр','костюмер','актёр', 'сценарист']
 
         # Создание стран
         country_objects = {}
@@ -32,9 +32,9 @@ class Command(BaseCommand):
 
         # Пример людей и ролей
         people_data = [
-            {'name': 'Иван Иванов', 'roles': ['Актер', 'Режиссер']},
-            {'name': 'Мария Смирнова', 'roles': ['Продюсер']},
-            {'name': 'Дмитрий Петров', 'roles': ['Оператор']},
+            {'name': 'Иван Иванов', 'roles': ['актер', 'режиссёр']},
+            {'name': 'Мария Смирнова', 'roles': ['продюсер']},
+            {'name': 'Дмитрий Петров', 'roles': ['оператор']},
         ]
 
         person_roles_objects = []
@@ -51,8 +51,8 @@ class Command(BaseCommand):
             {
                 'title': 'Побег из Шоушенка',
                 'release_date': '1994-09-23',
-                'country': 1,
-                'genres': [1],
+                'country': "США",
+                'genres': ['Комедия','Мультфильм','Ужас'],
                 'description': 'История о надежде и дружбе в тюрьме.',
                 'movie_length': 142,
                 'persons': person_roles_objects[:2],
@@ -61,8 +61,8 @@ class Command(BaseCommand):
             {
                 'title': 'Интерстеллар',
                 'release_date': '2014-11-07',
-                'country': 1,
-                'genres': [1, 4],
+                'country': "США",
+                'genres': ['Комедия','Мультфильм','Ужас'],
                 'description': 'Путешествие сквозь космос в поисках нового дома.',
                 'movie_length': 169,
                 'persons': person_roles_objects[1:],
@@ -71,8 +71,8 @@ class Command(BaseCommand):
             {
                 'title': 'Амели',
                 'release_date': '2001-04-25',
-                'country': 2,
-                'genres': [1, 2],
+                'country': "Германия",
+                'genres': ['Комедия','Мультфильм','Ужас'],
                 'description': 'История о девушке, меняющей жизни людей вокруг.',
                 'movie_length': 122,
                 'persons': person_roles_objects[:1],
@@ -81,8 +81,8 @@ class Command(BaseCommand):
             {
                 'title': 'Старикам здесь не место',
                 'release_date': '2007-11-09',
-                'country': 1,
-                'genres': [1, 5],
+                'country': "Германия",
+                'genres': ['Комедия','Мультфильм','Ужас'],
                 'description': 'Смертельная игра в пустынях Техаса.',
                 'movie_length': 122,
                 'persons': person_roles_objects[2:],
@@ -91,8 +91,8 @@ class Command(BaseCommand):
             {
                 'title': 'Принцесса Мононоке',
                 'release_date': '1997-07-12',
-                'country': 4,
-                'genres': [4, 6],
+                'country': "Германия",
+                'genres': ['Комедия','Мультфильм','Ужас'],
                 'description': 'Эпическая битва между природой и цивилизацией.',
                 'movie_length': 134,
                 'persons': person_roles_objects[:2],
@@ -101,8 +101,8 @@ class Command(BaseCommand):
             {
                 'title': 'Город Бога',
                 'release_date': '2002-02-13',
-                'country': 3,
-                'genres': [1, 3],
+                'country': "Германия",
+                'genres': ['Комедия','Мультфильм','Ужас'],
                 'description': 'Жестокая реальность трущоб Рио-де-Жанейро.',
                 'movie_length': 130,
                 'persons': person_roles_objects[1:],
@@ -119,11 +119,11 @@ class Command(BaseCommand):
                     'movie_length': movie_data['movie_length'],
                     'trailer_url': movie_data['trailer_url'],
                     'premium': False,
+                    'country': country_objects[movie_data['country']],
                 }
             )
 
             if created:
-                movie.country = country_objects[movie_data['country']]
                 movie.genres.set([genre_objects[g] for g in movie_data['genres']])
                 movie.persons.set(movie_data['persons'])
                 print(movie)

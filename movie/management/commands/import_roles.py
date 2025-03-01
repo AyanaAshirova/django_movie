@@ -23,7 +23,7 @@ class Command(BaseCommand):
             if created:
                 genre.save()
             else:
-                self.stdout.write(f'Genre is already exists: {i}')
+                self.stdout.write(f'Roles is already exists: {i}')
         
         self.stdout.write(self.style.SUCCESS(f'Roles imported'))
 

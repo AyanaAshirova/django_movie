@@ -15,7 +15,7 @@ ROLE_CHOICES = [
 ]
 
 class Role(models.Model):
-    name = models.CharField(max_length=20, verbose_name='Роль')
+    name = models.CharField(max_length=55, verbose_name='Роль')
 
     def __str__(self):
         return self.name

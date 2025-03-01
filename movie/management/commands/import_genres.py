@@ -21,7 +21,6 @@ class Command(BaseCommand):
             )
 
             if created:
-                genre.name = i.name
                 genre.save()
             else:
                 self.stdout.write(f'Genre is already exists: {i}')
