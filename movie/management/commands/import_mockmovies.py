@@ -32,19 +32,13 @@ class Command(BaseCommand):
 
         # Пример людей и ролей
         people_data = [
-            {'name': 'Иван Иванов', 'roles': ['актер', 'режиссёр']},
-            {'name': 'Мария Смирнова', 'roles': ['продюсер']},
-            {'name': 'Дмитрий Петров', 'roles': ['оператор']},
+            {'name': 'Иван Иванов', 'role': 'актёр'},
+            {'name': 'Иван Иванов', 'role': 'режиссёр'},
+            {'name': 'Мария Смирнова', 'role': 'продюсер'},
+            {'name': 'Дмитрий Петров', 'role': 'оператор'},
         ]
 
-        person_roles_objects = []
-        for person_data in people_data:
-            person, _ = Person.objects.get_or_create(name=person_data['name'])
-            role_objs = Role.objects.filter(name__in=person_data['roles'])
-            person_role, _ = PersonRole.objects.get_or_create(person=person)
-            person_role.roles.set(role_objs)
-            person_role.save()
-            person_roles_objects.append(person_role)
+
 
         # Пример фильмов
         movies = [
@@ -55,7 +49,7 @@ class Command(BaseCommand):
                 'genres': ['Комедия','Мультфильм','Ужас'],
                 'description': 'История о надежде и дружбе в тюрьме.',
                 'movie_length': 142,
-                'persons': person_roles_objects[:2],
+                'persons': people_data[:2],
                 'trailer_url': 'https://www.youtube.com/watch?v=NmzuHjWmXOc',
             },
             {
@@ -65,7 +59,7 @@ class Command(BaseCommand):
                 'genres': ['Комедия','Мультфильм','Ужас'],
                 'description': 'Путешествие сквозь космос в поисках нового дома.',
                 'movie_length': 169,
-                'persons': person_roles_objects[1:],
+                'persons': people_data[1:],
                 'trailer_url': 'https://www.youtube.com/watch?v=zSWdZVtXT7E',
             },
             {
@@ -75,7 +69,7 @@ class Command(BaseCommand):
                 'genres': ['Комедия','Мультфильм','Ужас'],
                 'description': 'История о девушке, меняющей жизни людей вокруг.',
                 'movie_length': 122,
-                'persons': person_roles_objects[:1],
+                'persons': people_data[:1],
                 'trailer_url': 'https://www.youtube.com/watch?v=HUECWi5pX7o',
             },
             {
@@ -85,7 +79,7 @@ class Command(BaseCommand):
                 'genres': ['Комедия','Мультфильм','Ужас'],
                 'description': 'Смертельная игра в пустынях Техаса.',
                 'movie_length': 122,
-                'persons': person_roles_objects[2:],
+                'persons': people_data[2:],
                 'trailer_url': 'https://www.youtube.com/watch?v=38A__WT3-o0',
             },
             {
@@ -95,7 +89,7 @@ class Command(BaseCommand):
                 'genres': ['Комедия','Мультфильм','Ужас'],
                 'description': 'Эпическая битва между природой и цивилизацией.',
                 'movie_length': 134,
-                'persons': person_roles_objects[:2],
+                'persons': people_data[:2],
                 'trailer_url': 'https://www.youtube.com/watch?v=4OiMOHRDs14',
             },
             {
@@ -105,7 +99,7 @@ class Command(BaseCommand):
                 'genres': ['Комедия','Мультфильм','Ужас'],
                 'description': 'Жестокая реальность трущоб Рио-де-Жанейро.',
                 'movie_length': 130,
-                'persons': person_roles_objects[1:],
+                'persons': people_data[1:],
                 'trailer_url': 'https://www.youtube.com/watch?v=dcUOO4Itgmw',
             },
         ]
@@ -125,9 +119,14 @@ class Command(BaseCommand):
 
             if created:
                 movie.genres.set([genre_objects[g] for g in movie_data['genres']])
-                movie.persons.set(movie_data['persons'])
-                print(movie)
                 movie.save()
+
+                for person_data in movie_data['persons']:
+                    person, _ = Person.objects.get_or_create(name=person_data['name'])
+                    role_objs = Role.objects.get(name=person_data['role'])
+                    movie_person, _ = MoviePerson.objects.get_or_create(person=person, movie=movie, role=role_objs)
+                    movie_person.save()
+
                 self.stdout.write(self.style.SUCCESS(f"Movie imported: {movie.title}"))
             else:
                 self.stdout.write(f"Movie already exists: {movie.title}")

@@ -1,18 +1,10 @@
 from datetime import datetime
 from django.db import models
 from django.core.validators import FileExtensionValidator
-
+import os
 from slugify import slugify
 from django.contrib.auth.models import User
 
-ROLE_CHOICES = [
-    ('actor', 'Актер'),
-    ('derctor', 'Режиссер'),
-    ('producer', 'Продюсер'),
-    ('writer', 'Сценарист'),
-    ('composer', 'Композитор'),
-    ('operator', 'Оператор')
-]
 
 class Role(models.Model):
     name = models.CharField(max_length=55, verbose_name='Роль')
@@ -23,16 +15,19 @@ class Role(models.Model):
 
 class Person(models.Model):
     name = models.CharField(max_length=1000, verbose_name='Имя')
-    photo = models.ImageField(upload_to='persons/', verbose_name='Фотографии')
-    movies = models.ManyToManyField('Movie', verbose_name='Фильмы', blank=True)
+    photo = models.ImageField(upload_to=f'persons/{name}/', verbose_name='Фотографии')
 
     def __str__(self):
         return self.name
 
 
-class PersonRole(models.Model):
-    person = models.ForeignKey(Person, on_delete=models.DO_NOTHING, related_name='roles', verbose_name='Человек')
-    roles = models.ManyToManyField(Role, verbose_name='Роли')
+class MoviePerson(models.Model):
+    movie = models.ForeignKey('Movie', on_delete=models.CASCADE, related_name='movie_persons')
+    person = models.ForeignKey(Person, on_delete=models.CASCADE, related_name='movie_roles', verbose_name='Человек')
+    role = models.ForeignKey(Role, verbose_name='Роли', related_name='movie_roles', on_delete=models.DO_NOTHING)
+
+    class Meta:
+        unique_together = ('person', 'movie', 'role')
 
 
 class Genre(models.Model):
@@ -40,6 +35,7 @@ class Genre(models.Model):
 
     def __str__(self):
         return self.name
+
     
 
 class Rating(models.Model):
@@ -80,12 +76,12 @@ class Movie(models.Model):
     country = models.ForeignKey(Country, on_delete=models.DO_NOTHING, related_name='movies')
     premium = models.BooleanField(default=False)
     price = models.PositiveBigIntegerField(null=True)
-    poster = models.ImageField(upload_to='movies/posters/', blank=True, null=True, default='default.jpg')
+    poster = models.ImageField(upload_to='movies/posters/', blank=True, null=True, default='movies/default-poster.jpg',)
     genres = models.ManyToManyField(Genre, verbose_name='Жанры')
     description = models.TextField(max_length=10000, null=True, blank=True, verbose_name='Описание')
     movie_length = models.PositiveBigIntegerField(verbose_name='Длительность в минутах')
-    persons = models.ManyToManyField(PersonRole, verbose_name='Люди')
-    bg_photo = models.ImageField(upload_to='movies/bg_photos',default='default.jpg', blank=True, null=True)
+    persons = models.ManyToManyField(Person, through=MoviePerson,verbose_name='Участники фильма')
+    bg_photo = models.ImageField(upload_to='movies/bg_photos/',default='movies/default-bg.jpg', blank=True, null=True)
     trailer_url = models.URLField(verbose_name='Ссылка на трейлер')
 
     video_360 = models.FileField(
@@ -123,6 +119,12 @@ class Movie(models.Model):
         if ratings.exists():
             return round(sum(rating.value for rating in ratings) / ratings.count(), 2)
         return 0
+
+    # def get_actors(self):
+    #     return Person.objects.filter(movie_roles__role__name='актёр').filter(movie_roles__movie=self)
+
+    # def get_creators(self):
+    #     return Person.objects.exclude(movie_roles__role__name='актёр').filter(movie_roles__movie=self)
 
     def __str__(self):
         return f'{self.title} - {self.release_date}'

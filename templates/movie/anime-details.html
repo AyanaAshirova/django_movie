@@ -27,15 +27,15 @@
             <div class="anime__details__content">
                 <div class="row">
                     <div class="col-lg-3">
-                        <div class="anime__details__pic set-bg" data-setbg="http://image.tmdb.org/t/p/original{{ tmdbd.poster_path }}">
+                        <div class="anime__details__pic set-bg" data-setbg="{{ movie.poster.url }}">
                             <div class="comment"><i class="fa fa-comments"></i> {{ movie.comments.count }}</div>
-                            <div class="view"><i class="fa fa-eye"></i> {{ movie.views }}</div>
+                            <div class="view"><i class="fa fa-eye"></i> {{ movie.views.count }}</div>
                         </div>
                     </div>
                     <div class="col-lg-9">
                         <div class="anime__details__text">
                             <div class="anime__details__title">
-                                <h3>{{ tmdbd.title }}</h3>
+                                <h3>{{ movie.title }}</h3>
                                 <span>{{ tmdbd.tagline }}</span>
                             </div>
                             <div class="anime__details__rating">
@@ -49,26 +49,27 @@
                                 <span>1.029 Votes</span>
                             </div>
                             <p>
-                                {% if movie.discription %}
-                                    {{ movie.discription }}
-                                {% else %}
-                                    {{ tmdbd.overview }}
-                                {% endif %}
+                                {{ movie.description }}
                             </p>
                             <div class="anime__details__widget">
                                 <div class="row">
                                     <div class="col-lg-6 col-md-6">
                                         <ul>
                                             <li><span>Type:</span> Movie</li>
-                                            <li><span>Studios:</span>
-                                                {% for i in tmdbd.production_companies %}
+                                            <li><span>Актёры:</span>
+                                                {% for i in movie.get_actors %}
                                                     {{ i.name }},
                                                 {% endfor %}
                                             </li>
+                                            <li><span>Создатели:</span>
+                                                {% for i in movie.get_creators %}
+                                                    {{ i.name }},
+                                                {% endfor %}
+                                            </li>
+                                            
                                             <li><span>Release date:</span>{{ movie.release_date }}</li>
-                                            <li><span>Status:</span> {{ tmdbd.status }}</li>
                                             <li><span>Genre:</span>
-                                                {% for i in tmdbd.genres %}
+                                                {% for i in movie.genres.all %}
                                                     {{ i.name }},
                                                 {% endfor %}
                                             </li>
@@ -78,7 +79,7 @@
                                         <ul>
                                             <li><span>Scores:</span> 7.31 / 1,515</li>
                                             <li><span>TMDB Rating:</span>{{ tmdbd.vote_average }}</li>
-                                            <li><span>Duration:</span> {{ tmdbd.runtime }}</li>
+                                            <li><span>Duration:</span> {{ movie.get_duration_display }}</li>
                                             <li><span>Countries:</span>
                                                 {% for i in tmdbd.production_countries %}
                                                     {{ i.name }},
@@ -136,7 +137,7 @@
                         <div class="section-title">
                             <h5>Your Comment</h5>
                         </div>
-                        {% include 'Comment/comment-form.html' %}
+                         include 'Comment/comment-form.html' 
                     </div>
                     <div class="anime__details__review">
                         <div class="section-title">
