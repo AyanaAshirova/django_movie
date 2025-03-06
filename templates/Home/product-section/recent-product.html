@@ -1,14 +1,15 @@
+
 {% if latest_movies %}
 <div class="recent__product">
       <div class="row">
           <div class="col-lg-8 col-md-8 col-sm-8">
               <div class="section-title">
-                  <h4>Recently Added Shows</h4>
+                  <h4>Недавно добавленные</h4>
               </div>
           </div>
           <div class="col-lg-4 col-md-4 col-sm-4">
               <div class="btn__all">
-                  <a href="#" class="primary-btn">View All <span class="arrow_right"></span></a>
+                  <a href="#" class="primary-btn">Смотреть все<span class="arrow_right"></span></a>
               </div>
           </div>
       </div>
@@ -16,18 +17,18 @@
           {% for m in latest_movies %}
               <div class="col-lg-4 col-md-6 col-sm-6">
                   <div class="product__item">
-                      <div class="product__item__pic set-bg" data-setbg="{{ m.poster_path }}">
-                          <div class="ep">TMDB {{ m.tmdb.vote_average|floatformat:1 }}</div>
+                      <div class="product__item__pic set-bg" data-setbg="{{ m.poster.url }}">
+                          <div class="ep">{{ m.average_rating|floatformat:1 }}</div>
                           <div class="comment"><i class="fa fa-comments"></i> {{ m.num_comments }}</div>
-                          <div class="view"><i class="fa fa-eye"></i> {{ m.views }}</div>
+                          <div class="view"><i class="fa fa-eye"></i> {{ m.views.all.count }}</div>
                       </div>
                       <div class="product__item__text">
                           <ul>
-                            {% for g in m.genre_list %}
-                                <li>{{ g }}</li>
+                            {% for g in m.genres.all %}
+                                <li>{{ g.name }}</li>
                              {% endfor %}
                           </ul>
-                          <h5><a href="{% url 'movie_details' m.id %}">{{ m.name }}</a></h5>
+                          <h5><a href="{% url 'movie_details' m.id %}">{{ m.title }}</a></h5>
                       </div>
                   </div>
               </div>

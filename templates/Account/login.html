@@ -24,18 +24,17 @@
                 <div class="col-lg-6">
                     <div class="login__form">
                         <h3>Вход</h3>
-                        <form action="" method="POST">
+                        <form action="{% url 'account_login' %}" method="post">
                             {% csrf_token %}
                             {{ form.as_p }}
                             <button type="submit" class="site-btn">Зарегистрироваться</button>
                         </form>
-                        <a href="#" class="forget_pass">Забыли пароль?</a>
                     </div>
                 </div>
                 <div class="col-lg-6">
                     <div class="login__register">
                         <h3>Нет аккаунта?</h3>
-                        <a href="/аccount/register/" class="primary-btn">Зарегистрироваться</a>
+                        <a href="{% url 'account_signup' %}" class="primary-btn">Зарегистрироваться</a>
                     </div>
                 </div>
             </div>
@@ -45,10 +44,8 @@
                         <div class="login__social__links">
                             <span>или</span>
                             <ul>
-                                <li><a href="#" class="facebook"><i class="fa fa-facebook"></i> Зарегистрироваться с:
-                                Facebook</a></li>
-                                <li><a href="#" class="google"><i class="fa fa-google"></i> Sign in With Google</a></li>
-                                <li><a href="#" class="twitter"><i class="fa fa-twitter"></i> Sign in With Twitter</a>
+                                <li>
+                                    <a href="#" class="twitter"><i class="fa fa-google"></i> Войти через Google</a>
                                 </li>
                             </ul>
                         </div>

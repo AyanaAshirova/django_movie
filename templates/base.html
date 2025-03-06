@@ -9,7 +9,7 @@
     <!-- The above 4 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
     <!-- Title -->
-    <title>All-In-One-Entertainment</title>
+    {% block tilte %}{% endblock %}
 
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -36,7 +36,7 @@
     </div>
 
     <!-- nevbar start -->
-    
+    {% include 'navbar.html' %}
     <!-- nevbar end -->
 
 

@@ -81,9 +81,9 @@
                         <span id="user" class="col-lg-1 text">{{ user }}
                             {% include 'Account/profile-modal.html' %}
                         </span>
-                        <a href="{% url 'Logout' %}">logout</a>
+                        <a href="{% url 'account_logout' %}">Выйти</a>
                     {% else %}
-                        <a href="{% url 'Login' %}"><span class="icon_profile"></span></a>
+                        <a href="{% url 'account_login' %}"><span class="icon_profile">Войти</span></a>
                     {% endif %}
 
                 </div>

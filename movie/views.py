@@ -24,6 +24,16 @@ class MovieDetail(DetailView):
     template_name = 'movie/anime-details.html'
     model = Movie
 
+    def get_object(self, queryset = None):
+        movie = super().get_object(queryset)
+        user = self.request.user
+        # movie.all_views += 1
+        if user.is_authenticated:
+            MovieViews.objects.get_or_create(user=user, movie=movie)
+
+        return movie
+
+
 
 
 

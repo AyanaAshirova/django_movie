@@ -23,21 +23,20 @@
             <div class="row">
                 <div class="col-lg-6">
                     <div class="login__form">
-                        <h3>Р</h3>
-                        <form action="{% url 'account_signup' %}" method="post">
+                        <h3>Выход из аккаунта</h3>
+                        <form action="{% url 'account_logout' %}" method="POST">
                             {% csrf_token %}
                             {{ form.as_p }}
-                            <button type="submit" class="site-btn">Зарегистрироваться</button>
+                            <button type="submit" class="site-btn">Выйти</button>
                         </form>
-                        <h5>Уже есть аккаунт? <a href="{% url 'account_login' %}">Войти</a></h5>
+                        <h5> <a href="{% url 'account_login' %}">Войти</a></h5>
                     </div>
                 </div>
                 <div class="col-lg-6">
                     <div class="login__social__links">
-                        <h3>или</h3>
                         <ul>
                             <li>
-                                <a href="#" class="twitter"><i class="fa fa-google"></i> Войти через Google</a>
+                                <a href="#" class="twitter"><i class="fa fa-home"></i>Вернуться на главную</a>
                             </li>
                         </ul>
                     </div>

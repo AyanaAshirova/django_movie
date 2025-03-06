@@ -120,11 +120,11 @@ class Movie(models.Model):
             return round(sum(rating.value for rating in ratings) / ratings.count(), 2)
         return 0
 
-    # def get_actors(self):
-    #     return Person.objects.filter(movie_roles__role__name='актёр').filter(movie_roles__movie=self)
+    def get_actors(self):
+        return Person.objects.filter(movie_roles__movie=self, movie_roles__role__name='актёр')
 
-    # def get_creators(self):
-    #     return Person.objects.exclude(movie_roles__role__name='актёр').filter(movie_roles__movie=self)
+    def get_creators(self):
+        return Person.objects.filter(movie_roles__movie=self).distinct()
 
     def __str__(self):
         return f'{self.title} - {self.release_date}'
