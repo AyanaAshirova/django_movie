@@ -34,6 +34,18 @@ class MovieDetail(DetailView):
         return movie
 
 
+class MovieFilter(ListView):
+    template_name = 'movie/catagories.html'
+    model = Movie
+
+    def get_queryset(self):
+        query_set = Movie.objects.all()
+        filters = {}
+
+        return query_set.filter(**filters).distinct()
+
+
+
 
 
 
