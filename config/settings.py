@@ -49,8 +49,8 @@ ACCOUNT_PASSWORD_MIN_LENGTH = 6
 ACCOUNT_PASSWORD_INPUT_RENDER_VALUE = True
 ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_AUTHENTICATION_METHOD = 'username'
-#ACCOUNT_LOGIN_METHODS = {'username'}
+# ACCOUNT_AUTHENTICATION_METHOD = 'username'
+# #ACCOUNT_LOGIN_METHODS = {'username'}
 
 
 MIDDLEWARE = [
@@ -93,7 +93,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'movie_db',
         'USER': 'postgres',
-        'PASSWORD': 'root',
+        'PASSWORD': '5625',
         'HOST': 'localhost',
         'PORT': '5432',
     }
