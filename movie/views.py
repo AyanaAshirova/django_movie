@@ -35,7 +35,7 @@ class MovieDetail(DetailView):
 
 
 class MovieFilter(ListView):
-    template_name = 'movie/catagories.html'
+    template_name = 'movie/categories.html'
     model = Movie
 
     def get_queryset(self):
@@ -43,6 +43,15 @@ class MovieFilter(ListView):
         filters = {}
 
         return query_set.filter(**filters).distinct()
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        pk = self.kwargs.get('pk')
+
+        context['genre'] = Genre.objects.get(id=pk)
+        context['movies'] = Movie.objects.filter(genres__id=pk).order_by('created_at')[:5]
+        return context
+    
 
 
 
