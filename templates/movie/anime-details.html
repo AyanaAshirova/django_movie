@@ -6,19 +6,19 @@
     {% load static %}
 
     <!-- Breadcrumb Begin -->
-    <div class="breadcrumb-option">
+    <!-- <div class="breadcrumb-option">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
                     <div class="breadcrumb__links">
-                        <a href="./index.html"><i class="fa fa-home"></i> Home</a>
-                        <a href="./categories.html">Categories</a>
-                        <span>Romance</span>
+                        <a href="./index.html"><i class="fa fa-home"></i>Главная</a>
+                        <a href="./categories.html">Категории</a>
+                        <span></span>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
     <!-- Breadcrumb End -->
 
     <!-- Anime Section Begin -->
@@ -55,7 +55,7 @@
                                 <div class="row">
                                     <div class="col-lg-6 col-md-6">
                                         <ul>
-                                            <li><span>Type:</span> Movie</li>
+                                            <li><span>Тип:</span>Фильм</li>
                                             <li><span>Актёры:</span>
                                                 {% for i in movie.get_actors %}
                                                     {{ i.name }},
@@ -67,8 +67,8 @@
                                                 {% endfor %}
                                             </li>
                                             
-                                            <li><span>Release date:</span>{{ movie.release_date }}</li>
-                                            <li><span>Genre:</span>
+                                            <li><span>Дата выхода:</span>{{ movie.release_date }}</li>
+                                            <li><span>Жанры:</span>
                                                 {% for i in movie.genres.all %}
                                                     {{ i.name }},
                                                 {% endfor %}
@@ -78,14 +78,11 @@
                                     <div class="col-lg-6 col-md-6">
                                         <ul>
                                             <li><span>Scores:</span> 7.31 / 1,515</li>
-                                            <li><span>TMDB Rating:</span>{{ tmdbd.vote_average }}</li>
-                                            <li><span>Duration:</span> {{ movie.get_duration_display }}</li>
-                                            <li><span>Countries:</span>
-                                                {% for i in tmdbd.production_countries %}
-                                                    {{ i.name }},
-                                                {% endfor %}
+                                            <li><span>длительность:</span> {{ movie.get_duration_display }}</li>
+                                            <li><span>Страна:</span>
+                                                    {{ movie.country.name }}
                                             </li>
-                                            <li><span>Views:</span> {{ movie.views }}</li>
+                                            <li><span>Все просмотры:</span> {{ movie.all_views }}</li>
                                         </ul>
                                     </div>
                                 </div>
@@ -100,44 +97,14 @@
                     </div>
                 </div>
 
-            {% if torrents %}
-            <div class="row">
-                <div class="anime__details__review">
-                        <div class="section-title">
-                            <h5>Torrent Files</h5>
-                        </div>
-                        <div class="mx-auto">
-                            <div class="anime__details__text">
-                                <div class="anime__details__title">
-                                    <h3></h3>
-                                </div>
-                                <div class="anime__details__widget">
-                                    <ul style="list-style: none;">
-                                        {% for i in torrents %}
-                                            <li class="row" >
-                                                <p class="col-lg-1">{{ i.seeds }}</p>
-                                                <p class="col-lg-7" style="word-wrap: wrap">{{ i.title }}</p>
-                                                <span class="col-lg-1">{{ i.filesize }}</span>
-                                                <p class="col-lg-1">{{ i.is_trusted }}</p>
-                                                <a href="{{ i.magnetlink }}" class="follow-btn anime__details__btn col-lg-2">Download</a>
-                                            </li>
-                                            <hr>
-                                        {% endfor %}
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-            </div>
-            {% endif %}
 
             <div class="row">
                 <div class="col-lg-8 col-md-8">
                     <div class="anime__details__form">
                         <div class="section-title">
-                            <h5>Your Comment</h5>
+                            <h5>Оставьте свой комментарий</h5>
                         </div>
-                         include 'Comment/comment-form.html' 
+                         {% include 'Comment/comment-form.html' %}
                     </div>
                     <div class="anime__details__review">
                         <div class="section-title">

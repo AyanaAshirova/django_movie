@@ -42,13 +42,13 @@
             </div>
             <div class="col-lg-3">
                 <div class="header__right">
-                    {% if user %}
-                        <span id="user" class="col-lg-1 text">{{ user }}
-                            {% include 'Account/profile-modal.html' %}
-                        </span>
+                    {% if user.username %}
+                        <span id="user" class="col-lg-1 text">
+                            {{ user.username }} <span class="icon_profile"></span>
+                        </span> 
                         <a href="{% url 'account_logout' %}">Выйти</a>
                     {% else %}
-                        <a href="{% url 'account_login' %}"><span class="icon_profile">Войти</span></a>
+                        <a href="{% url 'account_login' %}">Войти</a>
                     {% endif %}
 
                 </div>

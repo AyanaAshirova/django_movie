@@ -60,6 +60,7 @@ class MovieFrame(models.Model):
 class MovieViews(models.Model):
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name='history')
     movie = models.ForeignKey('Movie', on_delete=models.DO_NOTHING, related_name='views')
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         unique_together = ('user', 'movie')

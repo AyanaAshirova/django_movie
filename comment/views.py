@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+from movie.models import Movie
 
 from .forms import AddCommentForm
 
@@ -9,15 +10,16 @@ def add_comment(request, movie_id):
     reply_form = AddCommentForm()
     if request.method == 'POST':
         comment_form = AddCommentForm(request.POST)
+        movie = Movie.objects.get(id=movie_id)
         if comment_form.is_valid():
             comment = comment_form.save(commit=False)
-            comment.movie_id = movie_id
+            comment.movie = movie
             comment.user = request.user
             comment.save()
-            return redirect('movie_details', movie_id=movie_id)
+            return redirect('movie_detail', movie_id=movie_id)
     else:
         comment_form = AddCommentForm()
-        return render(request, 'Comment/comment-form.html', {'form': comment_form, 'reply_form': reply_form})
+        return render(request, 'Comment/comment-form.html', {'form': comment_form, 'reply_form': reply_form, 'movie': movie})
 
 
 @login_required

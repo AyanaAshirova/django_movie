@@ -11,7 +11,7 @@ class AddCommentForm(forms.ModelForm):
             'content': forms.Textarea(attrs={
                 'сols': 120,
                 'rows': 40,
-                'placeholder': 'Enter your comment here..'
+                'placeholder': '..'
             }),
         }
 
