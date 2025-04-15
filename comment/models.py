@@ -13,7 +13,7 @@ class Comment(models.Model):
     parent = models.ForeignKey('self', related_name='replies', null=True, blank=True, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f'{self.user.username} - {self.movie.name} : "{self.created_at}"'
+        return f'{self.user.username} - {self.movie.title}: "{self.content}" - {self.created_at.date()}'
 
 
 class CommentLikes(models.Model):

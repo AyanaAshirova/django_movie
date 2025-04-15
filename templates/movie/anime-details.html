@@ -1,9 +1,15 @@
 
 {% extends 'base.html' %}
 
+{% load static %}
+
+{% block style %}
+
+{% endblock %}
+
+
 {% block content %}
 
-    {% load static %}
 
     <!-- Breadcrumb Begin -->
     <!-- <div class="breadcrumb-option">
@@ -102,53 +108,17 @@
                 <div class="col-lg-8 col-md-8">
                     <div class="anime__details__form">
                         <div class="section-title">
-                            <h5>Оставьте свой комментарий</h5>
+                            <h5>Ваш комментарий</h5>
                         </div>
                          {% include 'Comment/comment-form.html' %}
+                         
                     </div>
                     <div class="anime__details__review">
                         <div class="section-title">
-                        {% if comments %}
-                            <h5>Reviews</h5>
-                        {% else %}
-                            <h5>No Comments</h5>
-                        {% endif %}
+                            <h5>Комментарии</h5>
                         </div>
-
-                        {% for comment in comments %}
-                            <div class="anime__review__item">
-                                <div class="anime__review__item__pic">
-                                    <img src="{{ comment.user.profile.avatar.url }}" alt="">
-                                </div>
-                                <div class="anime__review__item__text">
-                                    <h6>{{ comment.user.username }} - <span>{{ comment.created_at }}</span>
-                                    </h6>
-                                    <p>{{ comment.content }}</p>
-                                </div>
-                                <div class="anime__review__item__reply">
-                                    <button class="reply-btn site-btn" >Reply</button>
-                                    {% include 'Comment/reply-comment-form.html' %}
-
-                                </div>
-
-                                <div class="anime__replies">
-                                {% if comment.replies.all %}
-                                    {% for reply in comment.replies.all %}
-                                        <div class="anime__review__item anime__reply__item">
-                                            <div class="anime__review__item__pic">
-                                                <img src="{{ reply.user.profile.avatar.url }}" alt="">
-                                            </div>
-                                            <div class="anime__review__item__text">
-                                                <h6>{{ reply.user.username }} - <span>{{ reply.created_at }}</span>
-                                                </h6>
-                                                <p>{{ reply.content }}</p>
-                                            </div>
-                                        </div>
-                                    {% endfor %}
-                                {% endif %}
-                                </div>
-                            </div>
-                        {% endfor %}
+                        <div id="comment-section"></div>
+                        
                     </div>
 
                 </div>
@@ -170,8 +140,10 @@
         </div>
     </section>
     <!-- Anime Section End -->
- 
 
 {% endblock %}
 
 
+{% block importjs %}
+<script src="{% static 'js/comment.js' %}"></script>
+{% endblock %}

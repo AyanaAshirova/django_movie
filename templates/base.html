@@ -26,6 +26,7 @@
     <link rel="stylesheet" href="{% static 'css/owl.carousel.min.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/slicknav.min.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/style.css' %}" type="text/css">
+    {% block style %}{% endblock %}
 
 </head>
 <body>
@@ -51,6 +52,8 @@
     
     <!-- Search model end -->
 
+
+    {% block importjs %}{% endblock %}
 
     <!-- Js Plugins -->
     <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>

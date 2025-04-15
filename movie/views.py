@@ -1,5 +1,6 @@
 import random
 from datetime import datetime
+from django.db.models import Q
 
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
@@ -16,52 +17,58 @@ from django.db.models import Count
 def get_popular_movie_set():
     result_movie_list = {}
 
+    def _get_movies_by_period(date):
+        return Movie.objects.filter(views__created_at__gte=date)\
+        .annotate(views_count=Count('views'))\
+        .order_by('-views_count')
+
     def _add_movie_to_result(movie_list, label):
         for movie in movie_list:
-            id = movie['id']
-            print(id)
-            # result_movie_list[id] = {
-            #     'movie': movie,
-            #     'periods': set(result_movie_list[id]['periods']).add(label)
-            # }
+            movie_id = movie.id
+            if movie_id not in result_movie_list:    
+                result_movie_list[movie_id] = {
+                    'movie': movie,
+                    'periods': set()
+                }
 
+            result_movie_list[movie_id]['periods'] .add(label)
         
-    today = timezone.now().date()
-    week_ago = timezone.now() - timedelta(days=7)
-    month_ago = timezone.now() - timedelta(days=30)
+    now = timezone.now()    
+    today = now.date()
+    week_ago = now - timedelta(days=7)
+    month_ago = now - timedelta(days=30)
+    year_ago = now - timedelta(days=365)
 
-    popular_on_day = Movie.objects.filter(views__created_at_date__gte=today)\
-        .annotate(views_count=Count('views'))\
-        .order_by('-views_count')
-    popular_in_week = Movie.objects.filter(views__created_at_date__gte=week_ago)\
-        .annotate(views_count=Count('views'))\
-        .order_by('-views_count')
-    popular_for_month = (
-        Movie.objects.filter(views__created_at_date__gte=month_ago)
-        .annotate(views_count=Count('views'))
-        .order_by('-views_count')
-        )
+    popular_on_day = _get_movies_by_period(today)
+    popular_in_week = _get_movies_by_period(week_ago)
+    popular_for_month = _get_movies_by_period(month_ago)
+    popular_for_year = _get_movies_by_period(year_ago)
+
     _add_movie_to_result(popular_on_day, 'day')
     _add_movie_to_result(popular_in_week, 'week')
     _add_movie_to_result(popular_for_month, 'month')
+    _add_movie_to_result(popular_for_year, 'year')
 
     return result_movie_list
+
+
+def add_views_to_movie(user, movie):
+    movie.all_views += 1
+    movie.save()
+
+    if user.is_authenticated:
+        MovieViews.objects.get_or_create(user=user, movie=movie)
 
 
 
 class HomePage(TemplateView):
     template_name = 'Home/index.html'
-    a = get_popular_movie_set()
-    print(a)
 
     def get_context_data(self, **kwargs):
-        contex =  super().get_context_data(**kwargs)
-        contex['latest_movies'] = Movie.objects.all()[:6]
-
-        
-
-        contex['top_views_movies'] = Movie.objects.order_by('views')[:6]
-        return contex
+        context =  super().get_context_data(**kwargs)
+        context['latest_movies'] = Movie.objects.all()[:6]
+        context['top_views_movies'] = get_popular_movie_set()
+        return context
 
 
 class MovieDetail(DetailView):
@@ -71,9 +78,7 @@ class MovieDetail(DetailView):
     def get_object(self, queryset = None):
         movie = super().get_object(queryset)
         user = self.request.user
-        movie.all_views += 1
-        if user.is_authenticated:
-            MovieViews.objects.get_or_create(user=user, movie=movie)
+        add_views_to_movie(user, movie)
 
         return movie
 

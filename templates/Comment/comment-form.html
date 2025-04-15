@@ -1,7 +1,25 @@
 
-<form method="post" action="{% url 'add_comment' movie.id %}">
+<!-- <form method="post" action="{% url 'add_comment' movie.id %}">
     {% csrf_token %}
-<!--    {{ form.as_p }}-->
+   {{ form.as_p }}
     <textarea name="content" placeholder="Text your comment here.."></textarea>
     <button type="submit"><i class="fa fa-location-arrow"></i> Review</button>
+</form> -->
+
+
+<!-- <form id="comment-post-form">
+    <input type="hidden" name="user_id" value="{{user.id}}"/>
+    <textarea name="content" placeholder="Оставьте свой комментарий..."></textarea>
+    <button type="submit"><i class="fa fa-location-arrow"></i> Отправить</button>
+</form> -->
+
+<form id="comment-post-form" data-movie-id="{{ movie.id }}" data-user-id="{{user.id}}">
+    <input type="hidden" name="user" value="{{user.id}}"/>
+    <input type="hidden" name="movie" value="{{movie.id}}"/>
+    <textarea name="content" placeholder="Оставьте свой комментарий..." required></textarea>
+    <input type="hidden" name="parent" value="null"/>
+    <input type="hidden" name="status" value="True"/>
+    <button type="submit"><i class="fa fa-location-arrow"></i> Отправить</button>
 </form>
+
+<div id="commentsList"></div>
