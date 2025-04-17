@@ -1194,6 +1194,12 @@ ol {
 
 }
 
+textarea { 
+	width: 100%; 
+	margin-top: 5px; 
+	color: #fff;
+}
+
 .anime__details__form {
 	margin-bottom: 55px;
 }

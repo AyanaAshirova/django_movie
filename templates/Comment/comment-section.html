@@ -1,0 +1,169 @@
+{% load static %}
+<script src="{% static 'js/vue.global.prod.js' %}"></script>
+<!-- <script src="{% static 'js/comment.js' %}"></script> -->
+
+{% block style %}
+<style>
+    /* body { font-family: sans-serif; padding: 20px; }
+    .comment p {
+        color: #fff;
+    }
+    .comment { border-left: 2px solid #fff; margin-left: 10px; padding-left: 10px; margin-top: 10px; color: #ccc; }
+    textarea { width: 100%; margin-top: 5px; color: #fff;}
+    button { margin-top: 5px; } */
+</style>
+{% endblock %}
+
+<div class="anime__details__form">
+    <div class="section-title">
+        <h5>Ваш комментарий</h5>
+    </div>
+     {% include 'comment/comment-form.html' %}
+     
+</div>
+<div class="anime__details__review">
+    <div class="section-title">
+        <h5>Комментарии</h5>
+    </div>
+    
+    <div id="app">
+        <comment-tree :comments="comments"></comment-tree>
+    </div>
+    <div id="comments">
+        <comment-tree :comments="comments"></comment-tree>
+    </div>
+    
+</div>
+
+  <script>
+
+
+comments= [
+            {
+              id: 1,
+              author: 'Алиса',
+              text: 'Привет, это первый комментарий.',
+              children: [
+                {
+                  id: 2,
+                  author: 'Боб',
+                  text: 'Ответ на первый комментарий.',
+                  children: [
+                    {
+                      id: 4,
+                      author: 'Кира',
+                      text: 'Ответ на ответ.',
+                      children: []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              id: 3,
+              author: 'Ева',
+              text: 'Второй корневой комментарий.',
+              children: []
+            }
+          ]
+
+
+    const CommentItem = {
+      name: 'CommentItem',
+      props: ['comment'],
+      data() {
+        return {
+          replyText: '',
+          showForm: false
+        };
+      },
+      methods: {
+        addReply() {
+          if (!this.replyText.trim()) return;
+          const newReply = {
+            id: Date.now(),
+            author: "Вы",
+            text: this.replyText,
+            children: []
+          };
+          this.comment.children.push(newReply);
+          this.replyText = '';
+          this.showForm = false;
+        }
+      },
+      components: { CommentItem: null },
+      template: `
+        <div class="anime__review__item">
+            <div class="anime__review__item__pic">
+                <img src="{{ comment.user.profile.avatar.url }}" alt="">
+            </div>
+            <div class="anime__review__item__text">
+                <h6><span v-text="comment.author"></span> - <span v-text="comment.created_at"></span></h6>
+                <p v-text="comment.text"></p>
+            </div>
+            <div class="anime__review__item__reply">
+                <button class="reply-btn site-btn" @click="showForm = !showForm" >Ответить</button>
+                <form v-if="showForm" method="post" class="reply-form">
+                    <textarea  v-model="replyText" name="content" placeholder="Ваш ответ..."></textarea>
+                    <button @click="addReply" type="submit"><i class="fa fa-location-arrow send-reply" data-parent=""></i></button>
+                </form>
+            </div>
+    
+          <div v-if="comment.children.length" class="anime__review__item__reply">
+            <comment-item
+              v-for="child in comment.children"
+              :key="child.id"
+              :comment="child"
+            />
+          </div>
+        </div>
+      `
+    };
+
+    const CommentTree = {
+      props: ['comments'],
+      components: { CommentItem },
+      template: `
+        <div>
+
+          <comment-item
+            v-for="comment in comments"
+            :key="comment.id"
+            :comment="comment"
+          />
+        </div>
+      `
+    };
+
+    const app = Vue.createApp({
+      components: { CommentTree },
+      data() {
+        return {
+          comments: comments
+        };
+      }
+    });
+
+    const commentsApp = Vue.createApp({
+      components: { CommentTree },
+      data() {
+        return {
+          comments: comments
+        };
+      },  
+      methods: {
+        // fetchComments() {
+        //   const response = async fetch(``)
+        // }
+      },
+      template: `
+      <comment-tree :comments="comments"></comment-tree>
+      `
+
+    });
+
+    commentsApp.mount('#comments')
+
+    app.mount('#app');
+
+  </script>

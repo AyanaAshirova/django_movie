@@ -266,42 +266,7 @@ commentSection.addEventListener('click', (e) => {
     }
   });
 
-//   loadComments() 
 
-// {% for comment in comments %}
-    // <div class="anime__review__item" >
-    //     <div class="anime__review__item__pic">
-    //         <img src="{{ comment.user.profile.avatar.url }}" alt="">
-    //     </div>
-    //     <div class="anime__review__item__text">
-    //         <h6>{{ comment.user.username }} - <span>{{ comment.created_at }}</span>
-    //         </h6>
-    //         <p>{{ comment.content }}</p>
-    //     </div>
-    //     <div class="anime__review__item__reply">
-    //         <button class="reply-btn site-btn" >Reply</button>
-    //         {% include 'Comment/reply-comment-form.html' %}
-
-    //     </div>
-
-//         <div class="anime__replies">
-//         {% if comment.replies.all %}
-//             {% for reply in comment.replies.all %}
-//                 <div class="anime__review__item anime__reply__item">
-//                     <div class="anime__review__item__pic">
-//                         <img src="{{ reply.user.profile.avatar.url }}" alt="">
-//                     </div>
-//                     <div class="anime__review__item__text">
-//                         <h6>{{ reply.user.username }} - <span>{{ reply.created_at }}</span>
-//                         </h6>
-//                         <p>{{ reply.content }}</p>
-//                     </div>
-//                 </div>
-//             {% endfor %}
-//         {% endif %}
-//         </div>
-//     </div>
-// {% endfor %}
 
     //   <strong>${comment.username}</strong> <small>${comment.created_at}</small>
     //   <p>${comment.content}</p>

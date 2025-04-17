@@ -19,7 +19,7 @@
                   <div class="product__item">
                       <div class="product__item__pic set-bg" data-setbg="{{ m.poster.url }}">
                           <div class="ep">{{ m.average_rating|floatformat:1 }}</div>
-                          <div class="comment"><i class="fa fa-comments"></i> {{ m.num_comments }}</div>
+                          <div class="comment"><i class="fa fa-comments"></i> {{ m.comments.count }}</div>
                           <div class="view"><i class="fa fa-eye"></i> {{ m.views.all.count }}</div>
                       </div>
                       <div class="product__item__text">
@@ -36,3 +36,5 @@
       </div>
   </div>
 {% endif %}
+
+
