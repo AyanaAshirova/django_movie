@@ -23,3 +23,5 @@ accounts/ social/connections/
 movie_details/<pk>/ [name='movie_details']
 categories/<pk>/ [name='categories']
 ^media/(?P<path>.*)$
+
+<iframe class="h-full absolute top-0 right-0 w-[50%] max-1200px:w-[45%] max-800px:static max-800px:w-full max-800px:h-[300px] max-800px:mt-[24px]" src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d12130.073411312022!2d72.7924497!3d40.5301358!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses!2skg!4v1743412688649!5m2!1ses!2skg" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
