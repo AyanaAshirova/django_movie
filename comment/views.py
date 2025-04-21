@@ -1,4 +1,4 @@
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, status
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
@@ -20,20 +20,7 @@ def create(self, request, *args, **kwargs):
     return super().create(request, *args, **kwargs)
 
 
-class CommentApiView(generics.CreateAPIView):
-    serializer_class = CommentSerializer(many=False)
-
-class CommentListApiView(generics.ListAPIView):
-    serializer_class = CommentApiView
-    queryset = Comment.objects.all()
-
-
-class CommentApiView(APIView):
-    serializer_class = CommentApiView
-    queryset = Comment.objects.all()
-
-
-class MovieCommentListCreateView(generics.ListCreateAPIView):
+class MovieCommentListApiView(generics.ListCreateAPIView):
     serializer_class = CommentSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
@@ -46,6 +33,24 @@ class MovieCommentListCreateView(generics.ListCreateAPIView):
         movie_id = self.kwargs['movie_id']
         movie = generics.get_object_or_404(Movie, pk=movie_id)
         serializer.save(user=self.request.user, movie=movie, status=True)
+
+
+class CommentReplyView(APIView):
+
+    def post(self, request, pk):
+        try:
+            parent_comment = Comment.objects.get(pk=pk)
+            reply_data = request.data
+            serializer = CommentSerializer(data=reply_data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Comment.DoesNotExist:
+            return Response({'error': 'Parent Comment does not exists'}, status=status.HTTP_404_NOT_FOUND)
+        
+
+
 
 
 

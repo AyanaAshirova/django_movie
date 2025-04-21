@@ -1183,8 +1183,11 @@ ol {
 	font-size: 11px;
 	margin-bottom: 10px
 }
-.anime__reply__item {
+/* .anime__reply__item {
 
+} */
+.reply-form textarea {
+	color: #111;
 }
 .reply-comment-form {
     display: none;
@@ -1194,11 +1197,6 @@ ol {
 
 }
 
-textarea { 
-	width: 100%; 
-	margin-top: 5px; 
-	color: #fff;
-}
 
 .anime__details__form {
 	margin-bottom: 55px;
