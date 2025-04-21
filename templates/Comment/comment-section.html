@@ -26,46 +26,42 @@
         <h5>Комментарии</h5>
     </div>
     
-    <div id="comment" data-movie-id="{{ movie.id }}" username="{{user}}"></div>
+    <div id="comment" data-movie-id="{{ movie.id }}" user="{{ user }}"></div>
     
     
     
   </div>
-  
+  <!-- { userId: {{ user.id}}, username: {{ username }}} -->
   <!-- {% block importjs %}
   <script src="{% static 'js/comment.js' %}"></script>
   {% endblock %} -->
 <script>
     const CommentItem = {
       name: 'CommentItem',
-      props: ['comment', 'user', 'movieId'],
+      props: ['comment'],
       data() {
         return {
           replyText: '',
-          parentId: null,
           showForm: false
         };
       },
       methods: {
-        async addReply(commentId) {
+        async addReply() {
           if (!this.replyText.trim()) return;
-          this.parentId = commentId
-          // const newReply = await this.sendReply()
-          // newReply['children'] = []
-          // this.comment.children.push(newReply);
-          console.log(this.user)
+          const newReply = await this.sendReply()
+          newReply['children'] = []
+          this.comment.children.push(newReply);
           this.replyText = '';
           this.showForm = false;
-          this.parentId = null
         },
         async sendReply() {
           const newReply = {}
-          const url = `/api/v1/comments/${this.parentId}/reply/`
+          const url = `/api/v1/comments/${this.comment.id}/reply/`
           const data = {
-            user: this.user.id,
+            user: this.comment.user,//исправить пока тест-юзер
             content: this.replyText,
-            movie: this.movieId,
-            parent: this.parentId
+            movie: this.comment.movie,
+            parent: this.comment.id
           }
           try {
             const response = await fetch(url, {
@@ -101,7 +97,7 @@
                 <button class="reply-btn site-btn" @click="showForm = !showForm" >Ответить</button>
                 <div v-if="showForm"  class="reply-form">
                     <textarea  v-model="replyText" name="content" placeholder="Ваш ответ..."></textarea>
-                    <button @click="addReply(comment.id)" type="submit"><i class="fa fa-location-arrow send-reply" data-parent=""></i></button>
+                    <button @click="addReply()" type="submit"><i class="fa fa-location-arrow send-reply" data-parent=""></i></button>
                 </div>
             </div>
     
@@ -117,7 +113,7 @@
     };
 
     const CommentTree = {
-      props: ['comments'],
+      props: ['comments', 'user', 'movieId'],
       components: { CommentItem },
       template: `
         <div>
