@@ -26,7 +26,7 @@
         <h5>Комментарии</h5>
     </div>
     
-    <div id="comment" data-movie-id="{{ movie.id }}" user="{{ user }}"></div>
+    <div id="comment" data-movie-id="{{ movie.id }}" user="{{ user|safe }}"></div>
     
     
     
@@ -36,6 +36,7 @@
   <script src="{% static 'js/comment.js' %}"></script>
   {% endblock %} -->
 <script>
+
     const CommentItem = {
       name: 'CommentItem',
       props: ['comment'],
@@ -63,6 +64,7 @@
             movie: this.comment.movie,
             parent: this.comment.id
           }
+          console.log(data)
           try {
             const response = await fetch(url, {
               method: 'POST',
@@ -71,7 +73,9 @@
                 'X-CSRFToken': getCookie('csfrtoken')
               },
               body: JSON.stringify(data)
+              
             })
+            console.log((response));
 
             if (response.ok) {
               newReply = await response.json()
@@ -113,7 +117,7 @@
     };
 
     const CommentTree = {
-      props: ['comments', 'user', 'movieId'],
+      props: ['comments', 'user'],
       components: { CommentItem },
       template: `
         <div>
@@ -121,7 +125,7 @@
             v-for="comment in comments"
             :key="comment.id"
             :comment="comment"
-            :user="user" :movieId="movieId"
+            :user="user"
           />
         </div>
       `,
@@ -133,6 +137,8 @@
         const commentApp = document.getElementById('comment')
         this.movieId = commentApp.getAttribute('data-movie-id')
         this.user = commentApp.getAttribute('user')
+        console.log(this.user)
+        console.log(this.user.id, this.user.username)
         this.fetchComments()
       },
       data() {
@@ -178,26 +184,26 @@ function buildTree(comments, parent = null) {
     }));
 }
 
-function getCookie(name) {
-    const value = `; ${document.cookie}`
-    const parts = value.split(`; ${name}=`)
-    if (parts.length === 2) return parts.pop().split(';').shift()
-}
-
 // function getCookie(name) {
-//     let cookieValue = null;
-//     if (document.cookie && document.cookie !== '') {
-//         const cookies = document.cookie.split(';');
-//         for (let i = 0; i < cookies.length; i++) {
-//             const cookie = cookies[i].trim();
-//             if (cookie.startsWith(name + '=')) {
-//                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-//                 break;
-//             }
-//         }
-//     }
-//     return cookieValue;
+//     const value = `; ${document.cookie}`
+//     const parts = value.split(`; ${name}=`)
+//     if (parts.length === 2) return parts.pop().split(';').shift()
 // }
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.startsWith(name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
 
 
 </script>

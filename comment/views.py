@@ -41,6 +41,7 @@ class CommentReplyView(APIView):
         try:
             parent_comment = Comment.objects.get(pk=pk)
             reply_data = request.data
+            reply_data['parent'] = parent_comment
             serializer = CommentSerializer(data=reply_data)
             if serializer.is_valid():
                 serializer.save()

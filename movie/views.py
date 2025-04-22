@@ -81,6 +81,14 @@ class MovieDetail(DetailView):
         add_views_to_movie(user, movie)
 
         return movie
+    
+    def get_context_data(self, **kwargs):
+        context =  super().get_context_data(**kwargs)
+        context['user'] = {
+            'username': self.request.user,
+            'id': self.request.user.id
+            }
+        return context
 
 
 class MovieFilter(ListView):
