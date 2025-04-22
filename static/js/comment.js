@@ -1,43 +1,73 @@
-// Vue - render commentsTree
+
 const CommentItem = {
   name: 'CommentItem',
   props: ['comment'],
   data() {
     return {
       replyText: '',
-      showForm: false
+      showForm: false,
+      defaultAvatar: '/media/avatars/default-1.jpg',
+      userId: null
     };
   },
+  mounted() {
+    const commentApp = document.getElementById('v-comment')
+    this.userId = parseInt(commentApp.getAttribute('data-user-id'))
+  },
   methods: {
-    addReply() {
+    async addReply() {
       if (!this.replyText.trim()) return;
-      const newReply = {
-        id: Date.now(),
-        author: "Вы",
-        content: this.replyText,
-        children: []
-      };
-      this.comment.children.push(newReply);
+      let newReply = await this.sendReply()
+      newReply['children'] = []
+      if (newReply.id) this.comment.children.push(newReply);
       this.replyText = '';
       this.showForm = false;
+    },
+    async sendReply() {
+      let newReply = {}
+      const url = `/api/v1/comments/${this.comment.id}/reply/`
+      const commentChildData = {
+        user: this.userId,
+        movie: parseInt(this.comment.movie),
+        content: this.replyText,
+        parent: parseInt(this.comment.id)
+      }
+      try {
+        const response = await fetch(url, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie('csrftoken')
+          },  
+          body: JSON.stringify(commentChildData)            
+        })
+        
+        if (response.ok) {
+          newReply = await response.json()
+        }else {
+          console.error('Error while send reply:', response.statusText, response.json)
+        }
+      }catch (error) { console.error('Error post reply:', error) }
+      return newReply
     }
   },
   components: { CommentItem: null },
   template: `
     <div class="anime__review__item">
         <div class="anime__review__item__pic">
-            <img src="{{ comment.user.avatar.url }}" alt="">
+            <img :src="defaultAvatar" alt="user avatar">
         </div>
         <div class="anime__review__item__text">
-            <h6><span v-text="comment.username"></span> - <span v-text="comment.created_at"></span></h6>
+            <h6><span v-text="comment.username"></span> <span>-</span> <span v-text="comment.created_at"></span></h6>
             <p v-text="comment.content"></p>
         </div>
         <div class="anime__review__item__reply">
             <button class="reply-btn site-btn" @click="showForm = !showForm" >Ответить</button>
-            <form v-if="showForm" method="post" class="reply-form">
+            <div v-if="showForm"  class="reply-form">
                 <textarea  v-model="replyText" name="content" placeholder="Ваш ответ..."></textarea>
-                <button @click="addReply" type="submit"><i class="fa fa-location-arrow send-reply" data-parent=""></i></button>
-            </form>
+                <button @click="addReply()" type="submit"><i class="fa fa-location-arrow send-reply"></i></button>
+            </div>
         </div>
 
       <div v-if="comment.children.length" class="anime__review__item__reply">
@@ -52,13 +82,8 @@ const CommentItem = {
 };
 
 const CommentTree = {
-  props: ['movieId'],
+  props: ['comments'],
   components: { CommentItem },
-  data() {
-    return {
-      comments: []
-    }
-  },
   template: `
     <div>
       <comment-item
@@ -68,124 +93,61 @@ const CommentTree = {
       />
     </div>
   `,
-  mounted() {
-    this.fetchComments()
-  },
-  methods: {
-    async fetchComments() {
-      try {
-        const response = await fetch(`/api/v1/movies/${this.movieId}/comments/`,
-          {
-              method: 'get',
-              headers: {
-                  'Content-Type': 'applications/json'
-              }
-          })
-          .then(response =>  response = response.json())
-          .then(data => {
-              this.comments = buildTree(data)
-              console.log(data)
-          })
 
-      } catch(error) {console.log("Error: ", error)}
-
-    }
-  }
-};
-
-const app = Vue.createApp({
-  components: { CommentTree },
-});
-
-
-app.mount('#app');
-
-// ***********
-function buildTree(comments, parent = null) {
-  return comments
-  .filter(c => c.parent === parent)
-  .map(c => ({
-      ...c,
-      children: buildTree(comments, c.id)
-  }));
 }
 
+const app = Vue.createApp({
+  components: { CommentTree},
+  mounted() {
+    const commentApp = document.getElementById('v-comment')
+    this.movieId = parseInt(commentApp.getAttribute('data-movie-id'))
+    this.userId = parseInt(commentApp.getAttribute('data-user-id'))
+    this.fetchComments()
+  },
+  data() {
+    return {
+      comments: [],
+      movieId: null,
+    }
+  },
+  template: `
+    <comment-tree :comments="comments"></comment-tree>
+  `,
+  methods: {
+    async fetchComments() {
+      if (!this.movieId) {
+        console.error("Error: movieId is missing");
+        return;
+      }
+      try {
+        const response = await fetch(`/api/v1/movies/${this.movieId}/comments/`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        const data = await response.json();
+        this.comments = buildTree(data);
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    }
+  }
+});
 
-// children
-// content
-// created_at
-// id
-// movie
-// parent
-// user
-// username
+app.mount('#v-comment');
 
-// ***************************
+// *******************
 
+function buildTree(comments, parent = null) {
+return comments
+.filter(c => c.parent === parent)
+.map(c => ({
+    ...c,
+    children: buildTree(comments, c.id)
+}));
+}
 
-// const movieId = document.querySelector('input[name="movie"]').value
-// document.getElementById('comment-post-form').addEventListener('submit', async function(event) {
-//     event.preventDefault()
-//     const userId = this.querySelector('input[name="user"]').value
-//     const content = this.querySelector('textarea[name="content"]').value
-//     const formData = new FormData(this)
-//     const response = await fetch(`/api/v1/movies/${movieId}/comments/`, {
-//         method: 'post',
-//         body: formData,
-//         headers: {
-//             'X-CSRFToken': getCookie('csrftoken')
-//         }
-//     })
-//     console.log({
-//         user: userId,
-//         movie: movieId,
-//         content: content,
-//         parent: null,
-//     })
-//     console.log(response.body)
-
-//     if (response.ok) {
-//         const data = await response.json()
-
-//         // Пример добавления нового комментария
-//         const commentBlock = document.createElement('div')
-//         commentBlock.innerHTML = `<strong>${data.username}</strong>: ${data.content}`
-//         document.getElementById('commentsList').prepend(commentBlock)
-
-//         this.reset()
-//     } else {
-//         alert('Ошибка при отправке комментария')
-//     }
-// })
-
-// function getCookie(name) {
-//     const value = `; ${document.cookie}`
-//     const parts = value.split(`; ${name}=`)
-//     if (parts.length === 2) return parts.pop().split(';').shift()
-// }
-
-
-  
-//   // Обработка формы отправки нового комментария
-//   commentForm.addEventListener('submit', async (e) => {
-//     e.preventDefault();
-//     const formData = new FormData(commentForm);
-//     const body = {
-//       content: formData.get('content'),
-//       parent: formData.get('parent') || null
-//     };
-  
-//     const res = await fetch(`/api/v1/movies/${movieId}/comments/`, {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//         'X-CSRFToken': getCookie('csrftoken')
-//       },
-//       body: JSON.stringify(body)
-//     });
-  
-//     if (res.ok) {
-//       commentForm.reset();
-//       await loadComments();
-//     }
-//   });
+function getCookie(name) {
+const value = `; ${document.cookie}`
+const parts = value.split(`; ${name}=`)
+if (parts.length === 2) return parts.pop().split(';').shift()
+}

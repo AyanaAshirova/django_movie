@@ -81,6 +81,12 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
+# REST_FRAMEWORK = {
+#     'DEFAULT_PARSER_CLASSES': (
+#         'rest_framework.parsers.FormParser',
+#         'rest_framework.parsers.MultiPartParser'
+#     )
+# }
 
 ROOT_URLCONF = 'config.urls'
 

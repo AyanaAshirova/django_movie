@@ -8,8 +8,8 @@ class Comment(models.Model):
     content = models.CharField(max_length=3000)
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name='comments')
     movie = models.ForeignKey(Movie, related_name='comments', on_delete=models.CASCADE)
-    created_at = models.DateTimeField(default=timezone.now)
-    status = models.BooleanField(default=True)
+    created_at = models.DateTimeField(default=timezone.now, blank=True)
+    status = models.BooleanField(default=True, blank=True)
     parent = models.ForeignKey('self', related_name='replies', null=True, blank=True, on_delete=models.CASCADE)
 
     def __str__(self):

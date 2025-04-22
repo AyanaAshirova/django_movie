@@ -11,7 +11,7 @@ urlpatterns = [
     path('', include('movie.urls')),
 
     path('api/v1/movies/<int:movie_id>/comments/', MovieCommentListApiView.as_view(), name='movie-comments'),
-    path('api/v1/comments/<pk>/reply', CommentReplyView.as_view()),
+    path('api/v1/comments/<int:pk>/reply/', CommentReplyView.as_view()),
 
 ]
 

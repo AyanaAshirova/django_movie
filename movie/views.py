@@ -84,9 +84,9 @@ class MovieDetail(DetailView):
     
     def get_context_data(self, **kwargs):
         context =  super().get_context_data(**kwargs)
-        context['user'] = {
-            'username': self.request.user,
-            'id': self.request.user.id
+        context["user"] = {
+            "id": self.request.user.id,
+            "username": self.request.user.username
             }
         return context
 

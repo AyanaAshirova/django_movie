@@ -2,6 +2,7 @@ from rest_framework import generics, permissions, status
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework.views import APIView
 from movie.models import Movie
 from .serializers import *
@@ -9,83 +10,45 @@ from .forms import AddCommentForm
 from django.contrib.auth.models import User
 
 
+from django.utils.decorators import method_decorator
 from rest_framework.response import Response
 from rest_framework import status
 
-def create(self, request, *args, **kwargs):
-    serializer = self.get_serializer(data=request.data)
-    if not serializer.is_valid():
-        print(serializer.errors)  # ← тут ты увидишь точную причину
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    return super().create(request, *args, **kwargs)
 
-
-class MovieCommentListApiView(generics.ListCreateAPIView):
-    serializer_class = CommentSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+class MovieCommentListApiView(APIView):
+    def get(self, request, movie_id):
+        comments = Comment.objects.filter(movie__id=movie_id).order_by('created_at')
+        serializer = CommentSerializer(comments, many=True)
+        return Response(serializer.data)
+    # serializer_class = CommentSerializer
+    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     
-    def get_queryset(self):
-        movie_id = self.kwargs['movie_id']
-        return Comment.objects.filter(movie_id=movie_id).order_by('-created_at')
+    # def get_queryset(self):
+    #     movie_id = self.kwargs['movie_id']
+    #     return Comment.objects.filter(movie_id=movie_id).order_by('-created_at')
 
-    def perform_create(self, serializer):
-        movie_id = self.kwargs['movie_id']
-        movie = generics.get_object_or_404(Movie, pk=movie_id)
-        serializer.save(user=self.request.user, movie=movie, status=True)
+    # def perform_create(self, serializer):
+    #     movie_id = self.kwargs['movie_id']
+    #     movie = generics.get_object_or_404(Movie, pk=movie_id)
+    #     serializer.save(user=self.request.user, movie=movie, status=True)
 
 
 class CommentReplyView(APIView):
-
     def post(self, request, pk):
         try:
-            parent_comment = Comment.objects.get(pk=pk)
-            reply_data = request.data
-            reply_data['parent'] = parent_comment
-            serializer = CommentSerializer(data=reply_data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            Comment.objects.get(pk=pk)
         except Comment.DoesNotExist:
             return Response({'error': 'Parent Comment does not exists'}, status=status.HTTP_404_NOT_FOUND)
         
+        reply_data = request.data
+        serializer = CommentSerializer(data=reply_data)
 
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-
-
-@login_required
-def add_comment(request, movie_id):
-    reply_form = AddCommentForm()
-    if request.method == 'POST':
-        comment_form = AddCommentForm(request.POST)
-        movie = Movie.objects.get(id=movie_id)
-        if comment_form.is_valid():
-            comment = comment_form.save(commit=False)
-            comment.movie = movie
-            comment.user = request.user
-            comment.save()
-            return redirect('movie_details', pk=movie_id)
-    else:
-        comment_form = AddCommentForm()
-        return render(request, 'Comment/comment-form.html', {'form': comment_form, 'reply_form': reply_form, 'movie': movie})
-
-
-@login_required
-def reply_comment(request, movie_id, parent_id):
-    if request.method == 'POST':
-        comment_form = AddCommentForm(request.POST)
-        if comment_form.is_valid():
-            comment = comment_form.save(commit=False)
-            comment.movie_id = movie_id
-            comment.user = request.user
-            comment.parent_id = parent_id
-            comment.save()
-            return redirect('movie_details', pk=movie_id)
-    else:
-        comment_form = AddCommentForm()
-        return render(request, 'Comment/reply-comment-form.html', {'reply_form': comment_form})
 
 
 

@@ -1,210 +1,24 @@
+{% csrf_token %}
 {% load static %}
-<script src="{% static 'js/vue.global.prod.js' %}"></script>
-<!-- <script src="{% static 'js/comment.js' %}"></script> -->
-
-{% block style %}
-<style>
-    /* body { font-family: sans-serif; padding: 20px; }
-    .comment p {
-        color: #fff;
-    }
-    .comment { border-left: 2px solid #fff; margin-left: 10px; padding-left: 10px; margin-top: 10px; color: #ccc; }
-    textarea { width: 100%; margin-top: 5px; color: #fff;}
-    button { margin-top: 5px; } */
-</style>
-{% endblock %}
 
 <div class="anime__details__form">
     <div class="section-title">
         <h5>Ваш комментарий</h5>
     </div>
-     {% include 'comment/comment-form.html' %}
+     <!-- {% include 'comment/comment-form.html' %} -->
      
 </div>
 <div class="anime__details__review">
     <div class="section-title">
         <h5>Комментарии</h5>
     </div>
-    
-    <div id="comment" data-movie-id="{{ movie.id }}" user="{{ user|safe }}"></div>
-    
-    
-    
-  </div>
-  <!-- { userId: {{ user.id}}, username: {{ username }}} -->
-  <!-- {% block importjs %}
+    <!-- Vue-component -->
+    <div id="v-comment" data-movie-id="{{ movie.id }}" data-user-id="{{ user.id }}"></div>
+
+</div>
+
+  {% block importjs %}
+  <script src="{% static 'js/vue.global.prod.js' %}"></script>
   <script src="{% static 'js/comment.js' %}"></script>
-  {% endblock %} -->
-<script>
-
-    const CommentItem = {
-      name: 'CommentItem',
-      props: ['comment'],
-      data() {
-        return {
-          replyText: '',
-          showForm: false
-        };
-      },
-      methods: {
-        async addReply() {
-          if (!this.replyText.trim()) return;
-          const newReply = await this.sendReply()
-          newReply['children'] = []
-          this.comment.children.push(newReply);
-          this.replyText = '';
-          this.showForm = false;
-        },
-        async sendReply() {
-          const newReply = {}
-          const url = `/api/v1/comments/${this.comment.id}/reply/`
-          const data = {
-            user: this.comment.user,//исправить пока тест-юзер
-            content: this.replyText,
-            movie: this.comment.movie,
-            parent: this.comment.id
-          }
-          console.log(data)
-          try {
-            const response = await fetch(url, {
-              method: 'POST',
-              header: {
-                'Content-Type': 'applications/json',
-                'X-CSRFToken': getCookie('csfrtoken')
-              },
-              body: JSON.stringify(data)
-              
-            })
-            console.log((response));
-
-            if (response.ok) {
-              newReply = await response.json()
-              console(newReply)
-            }else {
-              console.error('Error while send reply:', response.statusText)
-            }
-          }catch (error) { console.error('Error:', error) }
-          return newReply
-        }
-      },
-      components: { CommentItem: null },
-      template: `
-        <div class="anime__review__item">
-            <div class="anime__review__item__pic">
-                <img src="{{ comment.user.avatar.url }}" alt="">
-            </div>
-            <div class="anime__review__item__text">
-                <h6><span v-text="comment.username"></span> <span>-</span> <span v-text="comment.created_at"></span></h6>
-                <p v-text="comment.content"></p>
-            </div>
-            <div class="anime__review__item__reply">
-                <button class="reply-btn site-btn" @click="showForm = !showForm" >Ответить</button>
-                <div v-if="showForm"  class="reply-form">
-                    <textarea  v-model="replyText" name="content" placeholder="Ваш ответ..."></textarea>
-                    <button @click="addReply()" type="submit"><i class="fa fa-location-arrow send-reply" data-parent=""></i></button>
-                </div>
-            </div>
-    
-          <div v-if="comment.children.length" class="anime__review__item__reply">
-            <comment-item
-              v-for="child in comment.children"
-              :key="child.id"
-              :comment="child"
-            />
-          </div>
-        </div>
-      `
-    };
-
-    const CommentTree = {
-      props: ['comments', 'user'],
-      components: { CommentItem },
-      template: `
-        <div>
-          <comment-item
-            v-for="comment in comments"
-            :key="comment.id"
-            :comment="comment"
-            :user="user"
-          />
-        </div>
-      `,
-    }
-
-    const app = Vue.createApp({
-      components: { CommentTree },
-      mounted() {
-        const commentApp = document.getElementById('comment')
-        this.movieId = commentApp.getAttribute('data-movie-id')
-        this.user = commentApp.getAttribute('user')
-        console.log(this.user)
-        console.log(this.user.id, this.user.username)
-        this.fetchComments()
-      },
-      data() {
-        return {
-          comments: [],
-          movieId: null,
-          user: {}
-        }
-      },
-      template: `
-        <comment-tree :comments="comments" :user="user" :movieId="movieId"></comment-tree>
-      `,
-      methods: {
-        async fetchComments() {
-          if (!this.movieId) {
-            console.error("Error: movieId is missing");
-            return;
-          }
-          try {
-            const response = await fetch(`/api/v1/movies/${this.movieId}/comments/`, {
-              method: 'GET',
-              headers: { 'Content-Type': 'application/json' }
-            });
-            const data = await response.json();
-            this.comments = buildTree(data);
-          } catch (error) {
-            console.error("Error:", error);
-          }
-        }
-      }
-    });
-
-    app.mount('#comment');
-
-    // *******************
-    
-function buildTree(comments, parent = null) {
-    return comments
-    .filter(c => c.parent === parent)
-    .map(c => ({
-        ...c,
-        children: buildTree(comments, c.id)
-    }));
-}
-
-// function getCookie(name) {
-//     const value = `; ${document.cookie}`
-//     const parts = value.split(`; ${name}=`)
-//     if (parts.length === 2) return parts.pop().split(';').shift()
-// }
-
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.startsWith(name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
-
-
-</script>
+  {% endblock %}
 
