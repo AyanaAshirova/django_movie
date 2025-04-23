@@ -3,6 +3,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from comment.views import CommentReplyView, MovieCommentListApiView
+from movie.views import MovieSearchApiView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -12,6 +13,7 @@ urlpatterns = [
 
     path('api/v1/movies/<int:movie_id>/comments/', MovieCommentListApiView.as_view(), name='movie-comments'),
     path('api/v1/comments/<int:pk>/reply/', CommentReplyView.as_view()),
+    path('api/v1/movies/search/', MovieSearchApiView.as_view()),
 
 ]
 

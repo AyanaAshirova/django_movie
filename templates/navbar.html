@@ -24,18 +24,13 @@
                                    {% for i in genres %}
                                        <li><a href="{% url 'categories' i.id %}">{{ i.name }}</a></li>
                                    {% endfor %}
-                                </ul>
-                                    <!-- <ul class="dropdown">
-
-                                        <li><a href="/movies/categories/20/">Action</a></li>
-                                </ul> -->
                             </li>
                         </ul>
                     </nav>
                 </div>
             </div>
             <div class="col-lg-3 py-3">
-                <form action="{% url 'home' %}" class="row" method="get">
+                <form action="{% url 'movie_search' %}" class="row" method="get">
                     <input type="search"  name="searchinput" placeholder="Search.." style="border: none; padding: 3px;">
                     <button type="submit"  style="border: none; background-color: #fff; "><i class="fa fa-search"></i></button>
                 </form>
