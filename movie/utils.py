@@ -5,11 +5,11 @@ from datetime import timedelta
 from django.db.models import Count
 
 
-def get_popular_movie_set():
+def get_popular_movie_set(queryset):
     result_movie_list = {}
 
     def _get_movies_by_period(date):
-        return Movie.objects.filter(views__created_at__gte=date)\
+        return queryset.filter(views__created_at__gte=date)\
         .annotate(views_count=Count('views'))\
         .order_by('-views_count')
 

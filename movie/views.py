@@ -12,6 +12,7 @@ from rest_framework import status
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, TemplateView, DetailView
 from .models import *
+from comment.models import Comment
 from .utils import get_popular_movie_set, add_views_to_movie
 
 
@@ -21,7 +22,11 @@ class HomePage(TemplateView):
     def get_context_data(self, **kwargs):
         context =  super().get_context_data(**kwargs)
         context['latest_movies'] = Movie.objects.all()[:6]
-        context['top_views_movies'] = get_popular_movie_set()
+        context['top_views_movies'] = get_popular_movie_set(Movie.objects.all())
+        context['latest_comments'] = Comment.objects\
+            .group_by('movie')\
+            .distinct()\
+            .order_by('created_at')
         return context
 
 
@@ -34,6 +39,7 @@ class MovieSearchApiView(APIView):
 
 def movie_search(request):
     return render('movie/search-details.html')
+
 
 class MovieDetail(DetailView):
     template_name = 'movie/anime-details.html'
@@ -56,7 +62,7 @@ class MovieDetail(DetailView):
     
 
 
-class MovieFilter(ListView):
+class MovieCategoryDetail(ListView):
     template_name = 'movie/categories.html'
     model = Movie
 
@@ -69,9 +75,12 @@ class MovieFilter(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         pk = self.kwargs.get('pk')
+        cat_movies = Movie.objects.filter(genres__id=pk)
 
         context['genre'] = Genre.objects.get(id=pk)
-        context['movies'] = Movie.objects.filter(genres__id=pk).order_by('created_at')[:5]
+        context['movies'] = cat_movies.order_by('created_at')[:5]
+        context['top_views_movies'] = get_popular_movie_set(cat_movies)
+        # context['latest_comments'] = cat_movies.
         return context
     
 

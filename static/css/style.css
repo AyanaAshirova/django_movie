@@ -748,7 +748,7 @@ ol {
 
 .product__sidebar__view .filter__controls {
 	position: absolute;
-	right: 0;
+	left: 0;
 	top: -5px;
 }
 
