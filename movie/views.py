@@ -23,10 +23,10 @@ class HomePage(TemplateView):
         context =  super().get_context_data(**kwargs)
         context['latest_movies'] = Movie.objects.all()[:6]
         context['top_views_movies'] = get_popular_movie_set(Movie.objects.all())
-        context['latest_comments'] = Comment.objects\
-            .group_by('movie')\
-            .distinct()\
-            .order_by('created_at')
+        context['latest_comments'] = Comment.objects.order_by('created_at')
+            # .group_by('movie')\
+            # .distinct()\
+            
         return context
 
 
@@ -54,10 +54,12 @@ class MovieDetail(DetailView):
     
     def get_context_data(self, **kwargs):
         context =  super().get_context_data(**kwargs)
+
         context["user"] = {
             "id": self.request.user.id,
             "username": self.request.user.username
             }
+        context['comments_count'] = Comment.objects.filter(movie__id=self.kwargs.get('pk')).count() 
         return context
     
 

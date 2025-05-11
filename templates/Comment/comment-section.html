@@ -1,24 +1,23 @@
 {% csrf_token %}
 {% load static %}
 
-<div class="anime__details__form">
-    <div class="section-title">
-        <h5>Ваш комментарий</h5>
-    </div>
-     <!-- {% include 'comment/comment-form.html' %} -->
-     
-</div>
 <div class="anime__details__review">
     <div class="section-title">
         <h5>Комментарии</h5>
     </div>
+    {% if comments_count > 0 %}
+
     <!-- Vue-component -->
     <div id="v-comment" data-movie-id="{{ movie.id }}" data-user-id="{{ user.id }}"></div>
+    {% else %}
+    <h6>Нет комментариев. Будьте первыми</h6>
+    {% endif %}
 
 </div>
 
-  {% block importjs %}
+
+{% block importjs %}
   <script src="{% static 'js/vue.global.prod.js' %}"></script>
   <script src="{% static 'js/comment.js' %}"></script>
-  {% endblock %}
+{% endblock %}
 

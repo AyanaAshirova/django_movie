@@ -17,7 +17,7 @@ from rest_framework import status
 
 class MovieCommentListApiView(APIView):
     def get(self, request, movie_id):
-        comments = Comment.objects.filter(movie__id=movie_id).order_by('created_at')
+        comments = Comment.objects.filter(movie__id=movie_id).order_by('-created_at')
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data)
     # serializer_class = CommentSerializer
@@ -48,6 +48,20 @@ class CommentReplyView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class CommentView(APIView):
+    def post(self, request):
+        
+        reply_data = request.data
+        serializer = CommentSerializer(data=reply_data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
 
 
 

@@ -1109,6 +1109,7 @@ ol {
 }
 
 .anime__details__review {
+	padding-top: 50px;
 	margin-bottom: 30px;
 }
 .anime__details__review .section-title{
@@ -1199,7 +1200,7 @@ ol {
 
 
 .anime__details__form {
-	margin-bottom: 55px;
+	margin-bottom: 30px;
 }
 
 .anime__details__form form textarea {

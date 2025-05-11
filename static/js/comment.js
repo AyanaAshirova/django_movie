@@ -85,19 +85,65 @@ const CommentTree = {
   props: ['comments'],
   components: { CommentItem },
   template: `
-    <div>
       <comment-item
         v-for="comment in comments"
         :key="comment.id"
         :comment="comment"
       />
-    </div>
   `,
 
 }
 
+const CommentForm = {
+  name: 'CommentForm',
+  props: ['userId', 'movieId'],
+  data() {
+    return {
+      content: '',
+    }
+  },
+  template: `
+  <div class="anime__details__form">
+    <form id="comment-post-form">
+      <textarea v-model="content" placeholder="Оставьте свой комментарий..." required></textarea>
+      <button @click="postComment" ><i class="fa fa-location-arrow"></i> Отправить</button>
+    </form>
+  </div>
+  `,
+  methods: {
+    async postComment() {
+      const url = `/api/v1/comments/`
+      const commentData = {
+        user: this.userId,
+        movie: this.movieId,
+        content: this.content,
+        parent: null
+      }
+      console.log(commentData)
+      try {
+        const response = await fetch(url, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie('csrftoken')
+          },  
+          body: JSON.stringify(commentData)            
+        })
+        
+        if (response.ok) {
+          newReply = await response.json()
+        }else {
+          console.error('Error while send reply:', response.statusText, response.json)
+        }
+      }catch (error) { console.error('Error post reply:', error) }
+      return newReply
+    }
+    }
+}
+
 const app = Vue.createApp({
-  components: { CommentTree},
+  components: { CommentTree, CommentForm },
   mounted() {
     const commentApp = document.getElementById('v-comment')
     this.movieId = parseInt(commentApp.getAttribute('data-movie-id'))
@@ -111,7 +157,10 @@ const app = Vue.createApp({
     }
   },
   template: `
+  <div>
+    <comment-form :userId="userId" :movieId="movieId"> </comment-form>
     <comment-tree :comments="comments"></comment-tree>
+  </div>
   `,
   methods: {
     async fetchComments() {

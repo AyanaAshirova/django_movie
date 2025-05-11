@@ -108,13 +108,11 @@
             <div class="row">
                 <div class="col-lg-8 col-md-8">
                     {% include 'Comment/comment-section.html' %}
-    
-
                 </div>
                     <div class="col-lg-4 col-md-4">
                         <div class="anime__details__sidebar">
                             <div class="section-title">
-                                <h5>you might like...</h5>
+                                <h5>Вам может понравиться</h5>
                             </div>
                              {% for i in tmdbr %}
                                 <div class="product__sidebar__view__item set-bg" data-setbg="http://image.tmdb.org/t/p/original{{ i.poster_path }}">
