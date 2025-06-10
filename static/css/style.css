@@ -37,6 +37,8 @@ body {
 	font-family: "Mulish", sans-serif;
 	-webkit-font-smoothing: antialiased;
 	background: #0b0c2a;
+	color: #b7b7b7;
+	position: relative;
 }
 
 h1,
@@ -78,7 +80,6 @@ h6 {
 p {
 	font-size: 15px;
 	font-family: "Mulish", sans-serif;
-	color: #3d3d3d;
 	font-weight: 400;
 	line-height: 25px;
 	margin: 0 0 15px 0;
@@ -86,6 +87,8 @@ p {
 
 img {
 	max-width: 100%;
+	vertical-align: bottom
+
 }
 
 input:focus,
@@ -166,6 +169,11 @@ ol {
 }
 
 /* buttons */
+button {
+	padding: 4px 16px;
+	border-radius: 50rem;
+	border: none;
+}
 
 .primary-btn {
 	display: inline-block;
@@ -285,8 +293,14 @@ ol {
 	height: 100%;
 	left: 0;
 	top: 0;
-	background: #000;
 	z-index: 99999;
+	background: #000000e0 ;
+  border-radius: 16px;
+  padding: 20px;
+  backdrop-filter: blur(10px); /* главный эффект */
+  -webkit-backdrop-filter: blur(10px); 
+  border: 1px solid rgba(255, 255, 255, 0.2);
+
 }
 
 .search-model-form {
@@ -335,11 +349,18 @@ ol {
 
 .header__logo {
 	padding: 20px 0 17px;
+	font-size: 24px;
+	font-weight: 800;
 }
 
 .header__logo a {
 	display: inline-block;
+	color: #ffffff;
 }
+.header__logo a span{
+	color: #e53637;
+}
+
 
 .header__menu {
 	text-align: center;
@@ -435,11 +456,23 @@ ol {
 .header__right a:last-child {
 	margin-right: 0;
 }
+.search-switch {
+	display: inline-block;
+	font-size: 18px;
+	color: #ffffff;
+	margin-right: 20px;
+	text-align: right;
+}
 
 .slicknav_menu {
 	display: none;
 }
 
+
+/* Filter */
+.dropdown-menu.show {
+	width: 320px;
+}
 /*---------------------
   Hero
 -----------------------*/
@@ -702,6 +735,8 @@ ol {
 
 .product__item__text ul {
 	margin-bottom: 10px;
+	display: flex;
+	flex-wrap: wrap;
 }
 
 .product__item__text ul li {
@@ -712,7 +747,9 @@ ol {
 	padding: 1px 10px;
 	background: rgba(255, 255, 255, 0.2);
 	border-radius: 50px;
-	display: inline-block;
+	margin-right: 5px;
+  margin-bottom: 5px;
+	/* display: inline-block; */
 }
 
 .product__item__text h5 a {
@@ -835,6 +872,7 @@ ol {
 .product__sidebar__comment__item__pic {
 	float: left;
 	margin-right: 15px;
+	vertical-align: bottom
 }
 
 .product__sidebar__comment__item__text {
@@ -924,7 +962,7 @@ ol {
 	padding-top: 15px;
 }
 
-.product__pagination a {
+.product__pagination a, .product__pagination span {
 	display: inline-block;
 	font-size: 15px;
 	color: #b7b7b7;
@@ -944,11 +982,11 @@ ol {
 	color: #ffffff;
 }
 
-.product__pagination a.current-page {
+.product__pagination a.current-page, .product__pagination span.current-page  {
 	border: 1px solid #ffffff;
 }
 
-.product__pagination a i {
+.product__pagination a i span{
 	color: #b7b7b7;
 	font-size: 15px;
 }
@@ -1023,20 +1061,17 @@ ol {
 
 .anime__details__rating {
 	text-align: center;
-	position: absolute;
-	right: 0;
-	top: 0;
 }
 
 .anime__details__rating .rating i {
-	font-size: 24px;
+	font-size: 20px;
 	color: #e89f12;
 	display: inline-block;
 }
 
 .anime__details__rating span {
 	display: block;
-	font-size: 18px;
+	font-size: 16px;
 	color: #b7b7b7;
 }
 
@@ -1069,8 +1104,17 @@ ol {
 
 .anime__details__widget ul li span {
 	color: #b7b7b7;
-	width: 115px;
 	display: inline-block;
+	white-space: nowrap;
+}
+.anime__details__widget ul li a {
+	color: #b7b7b7;
+	display: inline-block;
+	white-space: nowrap;
+	text-decoration: underline;
+}
+.anime__details__widget ul li a:hover {
+	color: #007bff;
 }
 
 .anime__details__btn .follow-btn {
@@ -1232,6 +1276,8 @@ ol {
   Anime Watching
 -----------------------*/
 
+
+/* 
 .anime__video__player {
 	margin-bottom: 70px;
 }
@@ -1313,7 +1359,7 @@ ol {
 .anime__video__player .plyr__control--overlaid svg {
 	height: 60px;
 	width: 50px;
-}
+}*/
 
 .anime__details__episodes {
 	margin-bottom: 35px;
@@ -1336,7 +1382,7 @@ ol {
 .anime__details__episodes a:hover {
 	color: #000000;
 	background: #ffffff;
-}
+} 
 
 /*---------------------
   Breadcrumb
@@ -1819,6 +1865,30 @@ ol {
 	padding-left: 76px;
 }
 
+.login__form form input {
+	height: 50px;
+	width: 100%;
+	font-size: 15px;
+	color: #b7b7b7;
+	background: #ffffff;
+	border: none;
+	padding-left: 76px;
+	position: relative;
+	width: 370px;
+	margin-bottom: 20px;
+}
+.login__form form input#id_remember {
+	width: 20px;
+	height: 20px;
+}
+
+.login__form label {
+	color: #b7b7b7;
+}
+.login__form li {
+	color: #b7b7b7;
+}
+
 .login__form form .input__item input::-webkit-input-placeholder {
 	color: #b7b7b7;
 }
@@ -2155,11 +2225,14 @@ ol {
 	.footer__copyright__text {
 		text-align: center;
 	}
-	.anime__details__widget ul li span {
+	/* .anime__details__widget ul li span {
 		width: 90px;
-	}
+	} */
 	.anime__details__pic {
 		margin-bottom: 40px;
+	}
+	.person__details__pic {
+		margin-bottom: 20px;
 	}
 	.anime__details__sidebar {
 		padding-top: 50px;
@@ -2267,6 +2340,9 @@ ol {
 	.anime__details__pic {
 		margin-bottom: 40px;
 	}
+	.person__details__pic {
+		margin-bottom: 20px;
+	}
 	.anime__details__sidebar {
 		padding-top: 50px;
 	}
@@ -2343,9 +2419,9 @@ ol {
 		margin-right: 11px;
 		margin-bottom: 25px;
 	}
-	.anime__details__widget ul li span {
+	/* .anime__details__widget ul li span {
 		width: 85px;
-	}
+	} */
 	.anime__video__player .plyr__volume {
 		left: 65px;
 	}
@@ -2443,3 +2519,335 @@ ol {
 .edit__profile__section {
     margin-bottom: 50px;
 }
+
+
+
+
+/* --------------  ALERTS  ------------ */
+.alert-box {
+  min-width: 250px;
+  margin-bottom: 12px;
+  padding: 14px 20px;
+  border-radius: 8px;
+  color: #fff;
+  font-weight: 500;
+  font-size: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  opacity: 0.95;
+  position: fixed;
+  bottom: 20px;
+  right: 10px;
+}
+
+.alert-box.success {
+  /* background: linear-gradient(135deg, #07bf2f); */
+  background-color:  #07bf2f;
+}
+
+.alert-box.error {
+  background-color:  #e53637;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: all 0.3s ease;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+
+/* ----------  Tabs  ---------- */
+
+.custom-tabs-wrapper {
+  overflow-x: auto;     /* Горизонтальная прокрутка */
+  white-space: nowrap;  /* Запрещаем перенос строк */
+  -webkit-overflow-scrolling: touch; /* плавная прокрутка на тачах */
+  margin-bottom: 1rem;
+}
+.custom-tabs-wrapper::-webkit-scrollbar {
+  height: 1px;                 /* можно уменьшить высоту полосы */
+  background: #ffffff33;     /* прозрачный фон */
+}
+
+.custom-tabs-wrapper::-webkit-scrollbar-thumb {
+  background-color: #ffffff3d; /* полупрозрачный "ползунок" */
+  border-radius: 3px;
+}
+
+.custom-tabs {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  margin-bottom: 1rem;
+
+  display: inline-flex;   
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.custom-tabs li {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border: 3px solid transparent;
+  border-bottom: none;
+  margin-right: 0.5rem;
+
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  white-space: nowrap; 
+  user-select: none;
+}
+.custom-tabs li.active {
+  background: #ffffff33;
+  /* font-weight: bold; */
+  color: #ffffff;
+}
+.tab-panel {
+  animation: fadeIn 0.3s ease-in-out;
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+
+/* Select */
+.nice-select {
+        background-color: transparent;
+        border: none;
+        height: 100%;
+        line-height: 1rem;
+    }
+    .nice-select .current {
+        line-height: 1.5;
+    }
+    .nice-select:after {
+        border-bottom: 2px solid #ffffff; 
+        border-right: 2px solid #ffffff;
+    }
+    .nice-select .option:hover, .nice-select .option.focus, .nice-select .option.selected.focus{
+        background-color: #252458;
+    }
+    .nice-select .list {
+        background-color: #363877;
+    }
+    select{
+      border: none;
+    
+    }
+
+	
+/* Person details */
+.person__details__pic {
+	height: 325px;
+	border-radius: 5px;
+	position: relative;
+	max-width: 230px;
+}
+
+
+
+
+/* Player  hls.js */
+
+.player-container {
+      position: relative;
+      width: 100%;
+      max-width: 960px;
+      margin: 20px auto;
+      background: black;
+	  box-sizing: content-box;
+    }
+
+    .player-container button i {
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.7);
+    transition: color 0.2s;
+    }
+    .player-container button:hover i {
+      color: white;
+    }
+
+    video {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      padding: 10px;
+      gap: 8px;
+      background: rgba(0, 0, 0, 0.75);
+    }
+	.overlay-controls .controls {
+		justify-content: space-between;
+
+	}
+
+    .controls button,
+    .controls select,
+    .controls input[type="range"] {
+      background: #222;
+      color: white;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .controls input[type="range"] {
+      flex: 1;
+    }
+
+    #video-overlay {
+      position:absolute;
+      top:0;left:0;right:0;bottom: 0;
+      display:flex;
+      flex-direction: column;
+    }
+    #video-overlay .controls {
+      padding: 0 5px;
+	  flex-wrap: nowrap;
+    }
+
+    #video-overlay .controls button,
+    #video-overlay .controls select {
+      background: transparent;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .overlay-controls.hide {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+	@media (max-width: 767px) {
+		.controls input[type="range"] {
+			display: none;
+		}
+		.time-info {
+			font-size: 10px;
+		}
+		#video-overlay .controls {
+			padding: 0 3px;
+			flex-wrap: nowrap;
+			gap: 0;
+    	}
+		.controls button,
+		.controls select,
+		.controls input[type="range"] {
+		padding: 3px 3px;
+		font-size: 10px;
+		}
+	}
+
+
+    .progress-bar {
+      position: relative;
+      height: 6px;
+      width: 100%;
+      background: #333;
+      cursor: pointer;
+    }
+
+    .progress-buffered {
+      position: absolute;
+      height: 100%;
+      background: #999;
+      width: 0%;
+    }
+
+    .progress-played {
+      position: absolute;
+      height: 100%;
+      background: #e53637;
+      width: 0%;
+    }
+
+     /* Hide browser default controls */
+    video::-webkit-media-controls {
+      display: none !important;
+    }
+
+    #volume {
+      appearance: none;
+      background: rgba(255, 255, 255, 0.3);
+      height: 4px;
+      border-radius: 2px;
+      cursor: pointer;
+    }
+
+    #volume::-webkit-slider-thumb {
+      appearance: none;
+      background: white;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    #audioSelect.hide, #subsSelect.hide {
+      display: none;
+    }
+
+
+    .player-container:-webkit-full-screen video,
+    .player-container:-moz-full-screen video,
+    .player-container:-ms-fullscreen video,
+    .player-container:fullscreen video {
+      width: 100vw !important;
+      height: 100vh !important;
+      object-fit: contain;
+    }
+
+    .player-container:-webkit-full-screen,
+    .player-container:-moz-full-screen,
+    .player-container:-ms-fullscreen,
+    .player-container:fullscreen {
+      width: 100vw !important;
+      height: 100vh !important;
+      margin: 0;
+      padding: 0;
+    }
+
+
+.big-play-button {
+  opacity: 40%;
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: opacity 0.3s;
+  font-size: 64px;
+}
+.big-play-button.hide {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#tooltipTime {
+  white-space: nowrap;
+  background: rgba(0,0,0,0.7);
+  padding: 2px 5px;
+  border-radius: 4px;
+  pointer-events: none;
+  transform: translateY(-6px);
+}
+

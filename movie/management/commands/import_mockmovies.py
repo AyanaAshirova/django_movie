@@ -48,7 +48,7 @@ class Command(BaseCommand):
             'country': "США",
             'genres': ['Драма', 'Криминал'],
             'description': 'История о надежде и дружбе в тюрьме.',
-            'movie_length': 142,
+            'duration': 142,
             'persons': [
                 {'name': 'Тим Роббинс', 'role': 'актёр'},
                 {'name': 'Морган Фриман', 'role': 'актёр'},
@@ -63,7 +63,7 @@ class Command(BaseCommand):
             'country': "США",
             'genres': ['Фантастика', 'Драма', 'Приключение'],
             'description': 'Путешествие сквозь космос в поисках нового дома.',
-            'movie_length': 169,
+            'duration': 169,
             'persons': [
                 {'name': 'Мэттью МакКонахи', 'role': 'актёр'},
                 {'name': 'Энн Хэтэуэй', 'role': 'актёр'},
@@ -78,7 +78,7 @@ class Command(BaseCommand):
             'country': "Франция",
             'genres': ['Комедия', 'Драма', 'Романтика'],
             'description': 'История о девушке, меняющей жизни людей вокруг.',
-            'movie_length': 122,
+            'duration': 122,
             'persons': [
                 {'name': 'Одри Тоту', 'role': 'актёр'},
                 {'name': 'Матье Кассовиц', 'role': 'актёр'},
@@ -93,7 +93,7 @@ class Command(BaseCommand):
             'country': "США",
             'genres': ['Драма', 'Триллер', 'Криминал'],
             'description': 'Смертельная игра в пустынях Техаса.',
-            'movie_length': 122,
+            'duration': 122,
             'persons': [
                 {'name': 'Хавьер Бардем', 'role': 'актёр'},
                 {'name': 'Джош Бролин', 'role': 'актёр'},
@@ -109,7 +109,7 @@ class Command(BaseCommand):
             'country': "Япония",
             'genres': ['Аниме', 'Приключение', 'Фэнтези'],
             'description': 'Эпическая битва между природой и цивилизацией.',
-            'movie_length': 134,
+            'duration': 134,
             'persons': [
                 {'name': 'Хаяо Миядзаки', 'role': 'режиссёр'}
             ],
@@ -121,7 +121,7 @@ class Command(BaseCommand):
             'country': "Бразилия",
             'genres': ['Драма', 'Криминал'],
             'description': 'Жестокая реальность трущоб Рио-де-Жанейро.',
-            'movie_length': 130,
+            'duration': 130,
             'persons': [
                 {'name': 'Александре Родригу', 'role': 'актёр'},
                 {'name': 'Леандро Фернандес', 'role': 'актёр'},
@@ -140,7 +140,7 @@ class Command(BaseCommand):
                 defaults={
                     'release_date': datetime.strptime(movie_data['release_date'], '%Y-%m-%d').date(),
                     'description': movie_data['description'],
-                    'movie_length': movie_data['movie_length'],
+                    'duration': movie_data['duration'],
                     'trailer_url': movie_data['trailer_url'],
                     'premium': False,
                     'country': country_objects[movie_data['country']],

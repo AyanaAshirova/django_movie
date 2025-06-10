@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% csrf_token %}
+
+{% block style %}
+{% endblock %}
+
+
+{% block title %}
+<title> {{person.name}} </title>
+{% endblock %}
+
+
+{% block content %}
+
+
+
+    <!-- Breadcrumb Begin -->
+    <!-- <div class="breadcrumb-option">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="breadcrumb__links">
+                        <a href="./index.html"><i class="fa fa-home"></i>Главная</a>
+                        <a href="./categories.html">Категории</a>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> -->
+    <!-- Breadcrumb End -->
+
+    <!-- Anime Section Begin -->
+    <section class="anime-details spad">
+        <div class="container">
+            <div class="anime__details__content">
+                <div class="row">
+                    <div class="col-lg-3 col-md-4">
+                        <div class="person__details__pic set-bg" data-setbg="{{ person.photo.url }}">
+                        </div>
+                    </div>
+                    <div class="col-lg-9 col-md-8">
+                        <div class="anime__details__text">
+                            <div class="anime__details__title">
+                                <h3>{{ person.name }}</h3>
+                                <span></span>
+                            </div>
+                            <div class="anime__details__widget">
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12">
+                                        <ul>
+                                            <li><span>Количество фильмов:</span> {{ movies_count }} </li>
+                                            <li><span>Жанры:</span>
+                                                {% for i in genres %}
+                                                    {{ i.name }}{% if not forloop.last %}, {% endif %}
+                                                {% endfor %}
+                                            </li>
+                                            <li><span>Роли:</span>
+                                                {% for i in roles %}
+                                                    {{ i.name }}{% if not forloop.last %}, {% endif %}
+                                                {% endfor %}
+                                            </li>
+                                            <li><span>Страны фильмов:</span>
+                                                {% for i in countries %}
+                                                    {{ i.name }}{% if not forloop.last %}, {% endif %}
+                                                {% endfor %}
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                            <div class="anime__details__btn row">
+                                <!-- <div id="v-watchlist-btn" data-user-id="{{ user.id }}" data-movie-id="{{ movie.id }}"></div> -->
+         
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            <div class="row">
+                <div class="col-lg-12 col-md-12">
+                    <div class="product__page__content">
+                        <!-- Компонент Vue -->
+                        <div id="v-person-movies-tab" data-person-id="{{ person.id }}"></div>
+
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-4">
+                    
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Anime Section End -->
+
+{% endblock %}
+
+{% block importjs %}
+<script src="{% static 'js/vue.person_movies_tab.js' %}"></script>
+{% endblock %}
+

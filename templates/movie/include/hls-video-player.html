@@ -1,0 +1,472 @@
+{% load static %}
+  <style>
+    
+  </style>
+
+<div class="anime__video__player">
+
+<div class="player-container">
+  <video id="video" data-hls-path="{{ hls_master_url }}" playsinline crossorigin="anonymous" style="display: block;position: relative;"></video>
+
+  <div id="video-overlay">
+    <div class="d-flex flex-grow-1">
+      <div id="rewind-o" style="flex:1;display:flex;align-items:center;justify-content:start;padding:0 10px;">
+      </div>
+      <div id="playpause-o" style="flex:1;display:flex;align-items:center;justify-content:center;">
+      </div>
+      <div id="forward-o" style="flex:1;display:flex;align-items:center;justify-content:end;padding:0 10px;">
+      </div>
+
+      <div id="bigPlayButton" class="big-play-button">
+        <i class="fa fa-play"></i>
+      </div>
+    </div>
+
+    <div class="overlay-controls">
+      <div class="progress-bar" id="progressContainer" style="position: relative;">
+        <div class="progress-buffered" id="bufferedBar"></div>
+        <div class="progress-played" id="playedBar"></div>
+
+        <div id="tooltipTime" style="position:absolute; color:#fff; font-size:12px; display:block;"></div>
+      </div>
+
+      <div class="controls">
+        <div class="d-flex">
+          <button id="rewind" class="mr-1"><i class="fa fa-rotate-left"></i></button>
+          <button id="playpause" class="mr-1"><i class="fa fa-play"></i></button>
+          <button id="forward"><i class="fa fa-rotate-right"></i></button>
+        </div>
+
+        <div class="time-info">
+          <span id="currentTime">00:00</span> / <span id="duration">00:00</span>
+        </div>
+
+        <div class="d-flex align-items-center">
+          <button id="muteBtn" class="mr-1" style="min-width: 37px;text-align: left;"><i class="fa fa-volume-up"></i></button>
+          <input type="range" id="volume" min="0" max="1" step="0.01" value="1" />
+        </div>
+
+        <select id="qualitySelect"></select>
+        <div class="d-flex">
+            <button id="fullscreenBtn" class="mr-1" title="Fullscreen">
+              <i class="fa fa-compress"></i>
+            </button> 
+            <button id="pipBtn" title="Picture in Picture">
+              <i class="fa fa-square-o text-white/70 hover:text-white"></i>
+            </button>
+        </div>
+      </div>
+
+    </div>
+    
+  </div>
+</div>
+
+<div class="controls">
+  <select id="audioSelect">
+    <option value="-1">Аудиодорожка</option>
+  </select>
+  
+  <select id="subsSelect">
+    <option value="-1">Субтитры</option>
+  </select>
+
+  <select id="speedSelect">
+    <optgroup label="Скорость">
+      <option value="0.5">0.5x</option>
+      <option value="1" selected>1x</option>
+      <option value="1.25">1.25x</option>
+      <option value="1.5">1.5x</option>
+      <option value="2">2x</option>
+    </optgroup>
+  </select>
+</div>
+
+</div>
+
+<script src="{% static 'js/hls.min.js' %}"></script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script> -->
+<script>
+  const video = document.getElementById('video');
+  const playpause = document.getElementById('playpause');
+  const playpauseOver = document.getElementById('playpause-o');
+  const rewind = document.getElementById('rewind');
+  const forward = document.getElementById('forward');
+  const volume = document.getElementById('volume');
+  const rewindOver = document.getElementById('rewind-o');
+  const forwardOver = document.getElementById('forward-o');
+  const qualitySelect = document.getElementById('qualitySelect');
+  const audioSelect = document.getElementById('audioSelect');
+  const subsSelect = document.getElementById('subsSelect');
+  const playedBar = document.getElementById('playedBar');
+  const bufferedBar = document.getElementById('bufferedBar');
+  const progressContainer = document.getElementById('progressContainer');
+  const fullscreenBtn = document.getElementById('fullscreenBtn');
+  const pipBtn = document.getElementById('pipBtn');
+  const muteBtn = document.getElementById('muteBtn');
+
+
+  const videoSrc = video.getAttribute('data-hls-path');
+  // const videoSrc = 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8';
+
+
+  let hls;
+  let isSeeking = false;
+
+
+
+  if (Hls.isSupported() && videoSrc) {
+    hls = new Hls();
+    hls.loadSource(videoSrc);
+    hls.attachMedia(video);
+
+    hls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
+      qualitySelect.innerHTML = '';
+      const group = document.createElement('optgroup');
+      group.label = 'Качество';
+
+      const auto = document.createElement('option');
+      auto.value = -1;
+      auto.text = 'Auto';
+      group.appendChild(auto);
+
+      data.levels.forEach((level, i) => {
+        const opt = document.createElement('option');
+        opt.value = i;
+        opt.text = `${level.height}p`;
+        group.appendChild(opt);
+      });
+      qualitySelect.appendChild(group)
+
+      qualitySelect.value = -1;
+    });
+
+    qualitySelect.addEventListener('change', () => {
+      hls.currentLevel = parseInt(qualitySelect.value);
+    });
+
+    hls.on(Hls.Events.AUDIO_TRACKS_UPDATED, (event, data) => {
+      audioSelect.innerHTML = '';
+      audioSelect.classList.add('hide')
+
+      if (data.audioTracks || data.audioTracks.length > 1 ){
+        audioSelect.classList.remove('hide')
+        const group = document.createElement('optgroup');
+        group.label = 'Аудио дорожки';
+
+        const auto = document.createElement('option');
+        auto.value = -1;
+        auto.text = 'Auto';
+        group.appendChild(auto);
+        
+        data.audioTracks.forEach((track, i) => {
+          const option = document.createElement('option');
+          option.value = i;
+          option.text = track.name || track.lang || `Track ${i+1}`;
+          group.appendChild(option);
+        });
+        audioSelect.appendChild(group)
+      }
+      audioSelect.value = 0
+    });
+    audioSelect.addEventListener('change', () => {
+        hls.audioTrack = parseInt(audioSelect.value);
+    });
+
+
+    hls.on(Hls.Events.SUBTITLE_TRACKS_UPDATED, (event, data) => {
+      subsSelect.innerHTML = '';
+      subsSelect.classList.add('hide')
+
+      if (data.subtitleTracks.length > 0 ){
+        subsSelect.classList.remove('hide')
+        const group = document.createElement('optgroup');
+        group.label = 'Субтитры';
+
+        const auto = document.createElement('option');
+        auto.value = -1;
+        auto.text = 'Без субтитров';
+        group.appendChild(auto);
+        
+        data.subtitleTracks.forEach((track, i) => {
+          const option = document.createElement('option');
+          option.value = i;
+          option.text = track.name || track.lang || `Track ${i+1}`;
+          group.appendChild(option);
+        });
+        subsSelect.appendChild(group)
+      }
+      subsSelect.value = 0
+    });
+    subsSelect.addEventListener('change', () => {
+      const selectedValue = parseInt(subsSelect.value);
+      if (selectedValue === -1) {
+        // Отключаем субтитры
+        hls.subtitleTrack = -1;
+        video.textTracks.forEach(track => {
+          track.mode = 'disabled';
+        });
+      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        // Safari или iOS
+        video.src = videoSrc;
+
+        video.addEventListener('error', function () {
+          console.error('Ошибка загрузки HLS на Safari');
+          showError('Видео не поддерживается или путь указан неверно.');
+        });
+      } else {
+        console.error('HLS не поддерживается в этом браузере');
+        showError('Ваш браузер не поддерживает HLS или путь указан неверно.');
+      }
+    });
+
+  } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+    video.src = videoSrc;
+  }
+
+
+  
+const videoContainer = document.querySelector('.player-container');
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'f') { // При нажатии на "f"
+    if (!document.fullscreenElement) {
+      // Если не в fullscreen — включаем fullscreen
+      if (videoContainer.requestFullscreen) {
+        videoContainer.requestFullscreen();
+      } else if (videoContainer.webkitRequestFullscreen) {
+        videoContainer.webkitRequestFullscreen();
+      } else if (videoContainer.msRequestFullscreen) {
+        videoContainer.msRequestFullscreen();
+      }
+    }
+  }
+});
+
+fullscreenBtn.addEventListener('click', () => {
+  if (!document.fullscreenElement) {
+    if (videoContainer.requestFullscreen) {
+      videoContainer.requestFullscreen();
+    } else if (videoContainer.webkitRequestFullscreen) { /* Safari */
+      videoContainer.webkitRequestFullscreen();
+    } else if (videoContainer.msRequestFullscreen) { /* IE11 */
+      videoContainer.msRequestFullscreen();
+    }
+  } else {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) { /* Safari */
+      document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) { /* IE11 */
+      document.msExitFullscreen();
+    }
+  }
+});
+
+
+
+pipBtn.addEventListener('click', async () => {
+  if (document.pictureInPictureElement) {
+    await document.exitPictureInPicture();
+  } else if (video.requestPictureInPicture) {
+    await video.requestPictureInPicture();
+  }
+});
+
+    
+progressContainer.addEventListener('click', (e) => {
+  const rect = progressContainer.getBoundingClientRect();
+  const clickX = e.clientX - rect.left;
+  const width = rect.width;
+  const ratio = clickX / width;
+  const seekTime = ratio * video.duration;
+
+  if (hls && hls.media) {
+    isSeeking = true;
+    video.pause();
+
+    video.currentTime = seekTime;
+
+    const onCanPlay = () => {
+      if (isSeeking) {
+        video.play();
+        isSeeking = false;
+      }
+      video.removeEventListener('canplay', onCanPlay);
+    };
+    video.addEventListener('canplay', onCanPlay);
+  } else {
+    video.currentTime = seekTime;
+  }
+});
+
+  playpause.addEventListener('click', () => {
+    if (video.paused) {
+      video.play();
+      playpause.innerHTML = '<i class="fa fa-pause"></i>';
+    } else {
+      video.pause();
+      playpause.innerHTML = '<i class="fa fa-play"></i>';
+    }
+  });
+  playpauseOver.addEventListener('click', () => {
+    if (video.paused) {
+      video.play();
+      playpause.innerHTML = '<i class="fa fa-pause"></i>';
+    } else {
+      video.pause();
+      playpause.innerHTML = '<i class="fa fa-play"></i>';
+    }
+  });
+
+  rewind.addEventListener('click', () => {
+    video.currentTime -= 10;
+  });
+
+  forward.addEventListener('click', () => {
+    video.currentTime += 10;
+  });
+
+
+  rewindOver.addEventListener('dblclick', () => {
+    video.currentTime = Math.max(0, video.currentTime - 10);
+  });
+
+  forwardOver.addEventListener('dblclick', () => {
+    video.currentTime = Math.min(video.duration, video.currentTime + 10);
+  });
+
+  volume.addEventListener('input', () => {
+    video.volume = volume.value;
+  });
+
+  video.addEventListener('timeupdate', () => {
+    if (!video.duration) return;
+    playedBar.style.width = `${(video.currentTime / video.duration) * 100}%`;
+
+    if (video.buffered.length) {
+      const bufferedEnd = video.buffered.end(video.buffered.length - 1);
+      bufferedBar.style.width = `${(bufferedEnd / video.duration) * 100}%`;
+    }
+  });
+
+
+
+  // progressContainer.addEventListener('click', (e) => {
+  //   const rect = progressContainer.getBoundingClientRect();
+  //   const clickX = e.clientX - rect.left;
+  //   const width = rect.width;
+  //   const ratio = clickX / width;
+  //   video.currentTime = ratio * video.duration;
+  // });
+
+
+muteBtn.addEventListener('click', () => {
+  video.muted = !video.muted; // переключаем mute
+
+  if (video.muted) {
+    muteBtn.innerHTML = '<i class="fa fa-volume-off"></i>';
+    volume.value = 0; // синхронизируем ползунок громкости
+  } else {
+    muteBtn.innerHTML = '<i class="fa fa-volume-up"></i>';
+    volume.value = video.volume || 1;
+  }
+});
+
+
+volume.addEventListener('input', (e) => {
+  video.volume = e.target.value;
+  if (video.volume > 0 && video.muted) {
+    video.muted = false;
+    muteBtn.innerHTML = '<i class="fa fa-volume-up"></i>';
+  }
+  if (video.volume == 0) {
+    video.muted = true;
+    muteBtn.innerHTML = '<i class="fa fa-volume-off"></i>';
+  }
+});
+
+
+let controlsTimeout;
+const overlay = document.getElementById('video-overlay');
+const overlayControls = overlay.querySelector('.overlay-controls');
+
+// Показываем контролы
+function showControls() {
+  overlayControls.classList.remove('hide');
+
+  clearTimeout(controlsTimeout);
+  controlsTimeout = setTimeout(() => {
+    overlayControls.classList.add('hide');
+  }, 3000);
+}
+
+// Показываем при старте
+showControls();
+
+// Показываем при любых действиях
+['mousemove', 'click', 'touchstart'].forEach(event => {
+  videoContainer.addEventListener(event, showControls);
+});
+
+// Останавливаем таймер, если видео на паузе (оставляем контролы видимыми)
+video.addEventListener('pause', () => {
+  clearTimeout(controlsTimeout);
+  overlayControls.classList.remove('hide');
+});
+
+// Скрываем после play
+video.addEventListener('play', showControls);
+
+
+
+const bigPlayButton = document.getElementById('bigPlayButton');
+
+bigPlayButton.addEventListener('click', () => {
+  video.play();
+  bigPlayButton.classList.add('hide');
+  playpause.innerHTML = '<i class="fa fa-pause"></i>';
+});
+
+
+
+function formatTime(seconds) {
+  const hours = Math.floor(seconds / 3600)
+  const minutes = Math.floor(seconds / 60) - (hours * 60);
+  const secs = Math.floor(seconds % 60);
+  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+}
+
+video.addEventListener('loadedmetadata', () => {
+  document.getElementById('duration').textContent = formatTime(video.duration);
+});
+
+video.addEventListener('timeupdate', () => {
+  document.getElementById('currentTime').textContent = formatTime(video.currentTime);
+});
+
+
+progressContainer.addEventListener('mousemove', (e) => {
+  const x = e.offsetX; // координата внутри прогресс-бара
+  const ratio = x / progressContainer.offsetWidth;
+  const previewTime = ratio * video.duration;
+
+  const tooltip = document.getElementById('tooltipTime');
+  tooltip.textContent = formatTime(previewTime);
+
+  // Центрируем подсказку по оси X
+  tooltip.style.left = `${x - tooltip.offsetWidth / 2}px`;
+
+  // Показываем прямо над прогресс-баром
+  tooltip.style.bottom = '100%';
+  tooltip.style.display = 'block';
+});
+
+const speedSelect = document.getElementById('speedSelect');
+speedSelect.addEventListener('change', () => {
+  video.playbackRate = parseFloat(speedSelect.value);
+});
+
+
+
+</script>

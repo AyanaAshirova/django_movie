@@ -1,0 +1,38 @@
+<form action="{% url 'filter' %}" method="get">
+    <div class="btn-group dropend mb-1">
+        <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            Жанры
+        </button>
+        <ul class="dropdown-menu filter-dropdown">
+            <h6 class="dropdown-header">Жанры</h6>
+            <div class="d-flex flex-wrap p-2">
+                {% for i in genres %}
+                    <div class="dropdown-item col-lg-6 col-md-6">
+                        <input type="checkbox" class="form-check-input d-block" name="genres" id="genre-{{ i.id }}" value="{{ i.id }}">
+                        <label for="genre-{{ i.id }}">{{ i.name }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+        </ul>
+    </div>
+
+    <div class="btn-group dropend mb-1">
+        <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            Страны
+        </button>
+        <ul class="dropdown-menu filter-dropdown">
+            <h6 class="dropdown-header">Страны</h6>
+            <div class="d-flex flex-md-wrap ">
+                {% for i in countries %}
+                    <div class="dropdown-item col-lg-6 col-md-6">
+                        <input type="checkbox" class="form-check-input" name="countries" id="country-{{ i.id }}" value="{{ i.id }}">
+                        <label for="country-{{ i.id }}">{{ i.name }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+        </ul>
+    </div>
+
+    <button type="submit" class="btn btn-primary d-lg-block mb-1">Найти</button>
+</form>
+               

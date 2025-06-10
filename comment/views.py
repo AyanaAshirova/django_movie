@@ -19,11 +19,8 @@ class MovieCommentListApiView(APIView):
     def get(self, request, movie_id):
         comments = Comment.objects.filter(movie__id=movie_id).order_by('-created_at')
         serializer = CommentSerializer(comments, many=True)
-        return Response(serializer.data)
-    # serializer_class = CommentSerializer
-    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
-    
     # def get_queryset(self):
     #     movie_id = self.kwargs['movie_id']
     #     return Comment.objects.filter(movie_id=movie_id).order_by('-created_at')
@@ -35,30 +32,34 @@ class MovieCommentListApiView(APIView):
 
 
 class CommentReplyView(APIView):
-    def post(self, request, pk):
+    def post(self, request, parent_id):
         try:
-            Comment.objects.get(pk=pk)
+            Comment.objects.get(id=parent_id)
         except Comment.DoesNotExist:
             return Response({'error': 'Parent Comment does not exists'}, status=status.HTTP_404_NOT_FOUND)
         
         reply_data = request.data
-        serializer = CommentSerializer(data=reply_data)
+        serializer = CommentPostSerializer(data=reply_data)
 
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            comment = serializer.save(user=self.request.user)
+            get_serializer = CommentSerializer(comment)
+            
+            return Response(get_serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
 class CommentView(APIView):
     def post(self, request):
         
-        reply_data = request.data
-        serializer = CommentSerializer(data=reply_data)
+        comment_data = request.data
+        serializer = CommentPostSerializer(data=comment_data)
 
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            comment = serializer.save(user=self.request.user)
+            get_serializer = CommentSerializer(comment)
+
+            return Response(get_serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 

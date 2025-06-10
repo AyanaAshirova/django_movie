@@ -18,10 +18,12 @@
         {% for movie_id, data in top_views_movies.items %}
         <div class="product__sidebar__view__item set-bg mix {{ data.periods|join:' ' }}"
                 data-setbg="{{ data.movie.poster.url }}">
-            <div class="wrap">{{ data.movie.name }}</div>
+            <div class="wrap"></div>
+            {% if data.movie.average_rating %}
             <div class="ep">{{ data.movie.average_rating|floatformat:1 }}</div>
+            {% endif %}
             <div class="view"><i class="fa fa-eye"></i> {{ data.movie.views.all.count }}</div>
-            <h5><a href="#">{{ data.movie.title }}</a></h5>
+            <h5><a href="{% url 'movie_details' data.movie.id %}">{{ data.movie.title }}</a></h5>
         </div>
         {% endfor %}
     </div>
@@ -37,16 +39,16 @@
     <div class="mb-3">
         <div class="mb-2 product__sidebar__comment__item">
             <div class="product__sidebar__comment__item__pic">
-                <img src="{{ i.poster.url }}" alt="" width="90">
+                <img src="{{ i.movie.poster.url }}" alt="" width="90">
             </div>
             <div class="product__sidebar__comment__item__text">
                 <ul>
-                    {% for g in i.genres.all %}
+                    {% for g in i.movie.genres.all %}
                         <li>{{ g }}</li>
                         {% endfor %}
                 </ul>
-                <h5><a href="{% url 'movie_details' i.id %}">{{ i.title }}</a></h5>
-                <span>Простмотры <i class="fa fa-eye"></i> {{ i.views.count }}</span>
+                <h5><a href="{% url 'movie_details' i.id %}">{{ i.movie.title }}</a></h5>
+                <span>Простмотры <i class="fa fa-eye"></i> {{ i.movie.views.count }}</span>
             </div>
         </div>
         <div class="anime__review__item__text">

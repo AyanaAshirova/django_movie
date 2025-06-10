@@ -1,18 +1,28 @@
+function buildTree(comments, parent = null) {
 
-const CommentItem = {
+return comments
+.filter(c => c.parent === parent)
+.map(c => ({
+    ...c,
+    children: buildTree(comments, c.id)
+  }));
+}
+
+// *******************
+let CommentItem = {}
+let CommentTree = {}
+
+CommentItem = {
+  components: { CommentItem },
   name: 'CommentItem',
-  props: ['comment'],
+  props: ['comment', 'userId'],
   data() {
     return {
       replyText: '',
       showForm: false,
-      defaultAvatar: '/media/avatars/default-1.jpg',
-      userId: null
     };
   },
   mounted() {
-    const commentApp = document.getElementById('v-comment')
-    this.userId = parseInt(commentApp.getAttribute('data-user-id'))
   },
   methods: {
     async addReply() {
@@ -27,7 +37,6 @@ const CommentItem = {
       let newReply = {}
       const url = `/api/v1/comments/${this.comment.id}/reply/`
       const commentChildData = {
-        user: this.userId,
         movie: parseInt(this.comment.movie),
         content: this.replyText,
         parent: parseInt(this.comment.id)
@@ -45,105 +54,110 @@ const CommentItem = {
         
         if (response.ok) {
           newReply = await response.json()
+          return newReply
         }else {
           console.error('Error while send reply:', response.statusText, response.json)
         }
       }catch (error) { console.error('Error post reply:', error) }
-      return newReply
+      
     }
   },
-  components: { CommentItem: null },
   template: `
     <div class="anime__review__item">
         <div class="anime__review__item__pic">
-            <img :src="defaultAvatar" alt="user avatar">
+            <img :src="comment.user.avatar">
         </div>
         <div class="anime__review__item__text">
-            <h6><span v-text="comment.username"></span> <span>-</span> <span v-text="comment.created_at"></span></h6>
-            <p v-text="comment.content"></p>
+            <h6>{{ comment.user.username }}<span> - {{ comment.created_at }}</span> </h6>
+            <p>{{ comment.content }}</p>
         </div>
-        <div class="anime__review__item__reply">
+        <div v-if="false && userId" class="anime__review__item__reply">
             <button class="reply-btn site-btn" @click="showForm = !showForm" >Ответить</button>
             <div v-if="showForm"  class="reply-form">
-                <textarea  v-model="replyText" name="content" placeholder="Ваш ответ..."></textarea>
-                <button @click="addReply()" type="submit"><i class="fa fa-location-arrow send-reply"></i></button>
+                <textarea  v-model="replyText" @input="replyText = $event.target.value" name="content" placeholder="Ваш ответ..."></textarea>
+                <button @click="addReply" type="submit"><i class="fa fa-location-arrow send-reply"></i></button>
             </div>
         </div>
 
-      <div v-if="comment.children.length" class="anime__review__item__reply">
+      <div v-if="comment.children.length > 0" class="anime__review__item__reply">
         <comment-item
           v-for="child in comment.children"
           :key="child.id"
           :comment="child"
+          :userId="userId"
         />
+        
       </div>
     </div>
   `
 };
 
-const CommentTree = {
-  props: ['comments'],
+CommentTree = {
+  name: 'CommentTree',
+  props: ['comments', 'userId'],
   components: { CommentItem },
   template: `
       <comment-item
         v-for="comment in comments"
         :key="comment.id"
         :comment="comment"
+        :userId="userId"
       />
   `,
 
 }
 
+
 const CommentForm = {
   name: 'CommentForm',
-  props: ['userId', 'movieId'],
+  props: ['movieId'],
   data() {
     return {
-      content: '',
+      contentText: '',
     }
-  },
+},
   template: `
   <div class="anime__details__form">
-    <form id="comment-post-form">
-      <textarea v-model="content" placeholder="Оставьте свой комментарий..." required></textarea>
-      <button @click="postComment" ><i class="fa fa-location-arrow"></i> Отправить</button>
+    <form id="comment-post-form" @submit.prevent="postComment">
+      <textarea  @input="contentText = $event.target.value" placeholder="Оставьте свой комментарий..."></textarea>
+      <button type="submit" ><i class="fa fa-location-arrow"></i> Отправить</button>
     </form>
   </div>
   `,
   methods: {
     async postComment() {
-      const url = `/api/v1/comments/`
-      const commentData = {
-        user: this.userId,
+      if (!this.contentText.trim()) return;
+      const comment = {
         movie: this.movieId,
-        content: this.content,
+        content: this.contentText,
         parent: null
       }
-      console.log(commentData)
+      let newComment = {}
       try {
-        const response = await fetch(url, {
+        const response = await fetch(`/api/v1/comments/`, {
           method: "POST",
           credentials: "include",
           headers: {
             "Content-Type": "application/json",
             "X-CSRFToken": getCookie('csrftoken')
           },  
-          body: JSON.stringify(commentData)            
+          body: JSON.stringify(comment)            
         })
         
         if (response.ok) {
-          newReply = await response.json()
+          newComment = await response.json()
+          this.$emit('new-comment', newComment)
+          this.contentText = ''
         }else {
-          console.error('Error while send reply:', response.statusText, response.json)
+          console.error('Error while send comment:', response.statusText, response.json)
         }
-      }catch (error) { console.error('Error post reply:', error) }
-      return newReply
-    }
+      }catch (error) { console.error('Error post comment:', error) }
+    },
     }
 }
 
-const app = Vue.createApp({
-  components: { CommentTree, CommentForm },
+const commentApp = Vue.createApp({
+  components: { CommentItem, CommentTree, CommentForm, },
   mounted() {
     const commentApp = document.getElementById('v-comment')
     this.movieId = parseInt(commentApp.getAttribute('data-movie-id'))
@@ -154,15 +168,30 @@ const app = Vue.createApp({
     return {
       comments: [],
       movieId: null,
+      userId: null
     }
   },
   template: `
   <div>
-    <comment-form :userId="userId" :movieId="movieId"> </comment-form>
-    <comment-tree :comments="comments"></comment-tree>
+    <comment-form v-if="userId" :movieId="movieId" @new-comment="addComment"> </comment-form>
+    <div v-else>
+      <p>Чтобы оставить комментарий, <a href="/accounts/login/">войдите</a> или <a href="/accounts/signup/">зарегистрируйтесь</a>.</p>
+    </div>
+
+    <comment-tree
+        v-if="comments"
+        :comments="comments"
+        :userId="userId"
+      />
+      <div v-else>
+        <p>Комментариев пока нет. Будьте первым!</p>  
+      </div>
   </div>
   `,
   methods: {
+    addComment(comment) {
+      this.fetchComments()
+    },
     async fetchComments() {
       if (!this.movieId) {
         console.error("Error: movieId is missing");
@@ -173,30 +202,18 @@ const app = Vue.createApp({
           method: 'GET',
           headers: { 'Content-Type': 'application/json' }
         });
-        const data = await response.json();
+      
+        let data = await response.json();
         this.comments = buildTree(data);
+        
+
       } catch (error) {
         console.error("Error:", error);
       }
-    }
+    },
+    
   }
 });
 
-app.mount('#v-comment');
+commentApp.mount('#v-comment');
 
-// *******************
-
-function buildTree(comments, parent = null) {
-return comments
-.filter(c => c.parent === parent)
-.map(c => ({
-    ...c,
-    children: buildTree(comments, c.id)
-}));
-}
-
-function getCookie(name) {
-const value = `; ${document.cookie}`
-const parts = value.split(`; ${name}=`)
-if (parts.length === 2) return parts.pop().split(';').shift()
-}

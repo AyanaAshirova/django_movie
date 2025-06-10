@@ -9,7 +9,9 @@
     <!-- The above 4 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
     <!-- Title -->
-    {% block tilte %}{% endblock %}
+    {% block title %}
+    <title>WatchMovie</title>
+    {% endblock %}
 
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -21,7 +23,7 @@
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/elegant-icons.css' %}" type="text/css">
-    <link rel="stylesheet" href="{% static 'css/plyr.css' %}" type="text/css">
+    <!-- <link rel="stylesheet" href="{% static 'css/plyr.css' %}" type="text/css"> -->
     <link rel="stylesheet" href="{% static 'css/nice-select.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/owl.carousel.min.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/slicknav.min.css' %}" type="text/css">
@@ -32,9 +34,13 @@
 <body>
 
      <!-- Page Preloder -->
-    <div id="preloder">
-        <div class="loader"></div>
-    </div>
+     <div id="preloder">
+         <div class="loader"></div>
+        </div>
+        
+    <!-- Vue Alerts -->
+    <div id="v-alerts" style="position: absolute; top: 20px; right: 20px;"></div>
+
 
     <!-- nevbar start -->
     {% include 'navbar.html' %}
@@ -45,25 +51,39 @@
 
 
     <!-- ##### Footer Area Start ##### -->
-    
+    {% include 'footer.html' %}
     <!-- ##### Footer Area End ##### -->
-
-     <!-- Search model Begin -->
+    
+    <!-- Search model Begin -->
+    {% include 'search-model.html' %}
     
     <!-- Search model end -->
 
 
-    {% block importjs %}{% endblock %}
 
     <!-- Js Plugins -->
     <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
-    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <!-- <script src="{% static 'js/bootstrap.min.js' %}"></script> -->
+    <script src="{% static 'js/bootstrap.bounble.min.js' %}"></script>
     <script src="{% static 'js/player.js' %}"></script>
-    <script src="{% static 'js/jquery.nice-select.min.js' %}"></script>
+    <!-- <script src="{% static 'js/jquery.nice-select.min.js' %}"></script> -->
     <script src="{% static 'js/mixitup.min.js' %}"></script>
     <script src="{% static 'js/jquery.slicknav.js' %}"></script>
     <script src="{% static 'js/owl.carousel.min.js' %}"></script>
     <script src="{% static 'js/main.js' %}"></script>
 
+    <script src="{% static 'js/vue.global.prod.js' %}"></script>
+    <script src="{% static 'js/vue.components.js' %}"></script>
+    <script src="{% static 'js/vue.alerts.js' %}"></script>
+    <script src="{% static 'js/vue.search.js' %}"></script>
+
+
+
+
+    
+    {% block importjs %}{% endblock %}
+
+
 </body>
+
 </html>

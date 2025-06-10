@@ -1,4 +1,3 @@
-
 {% extends 'base.html' %}
 
 {% load static %}
@@ -8,6 +7,9 @@
 
 {% endblock %}
 
+{% block title %}
+<title>{{ movie.title }}</title>
+{% endblock %}
 
 {% block content %}
 
@@ -41,20 +43,15 @@
                     </div>
                     <div class="col-lg-9">
                         <div class="anime__details__text">
-                            <div class="anime__details__title">
-                                <h3>{{ movie.title }}</h3>
-                                <span>{{ tmdbd.tagline }}</span>
-                            </div>
-                            <div class="anime__details__rating">
-                                <div class="rating">
-                                    <a href="#"><i class="fa fa-star"></i></a>
-                                    <a href="#"><i class="fa fa-star"></i></a>
-                                    <a href="#"><i class="fa fa-star"></i></a>
-                                    <a href="#"><i class="fa fa-star"></i></a>
-                                    <a href="#"><i class="fa fa-star-half-o"></i></a>
+                            <div class="row wrap">
+                                <div class="d-inline-block anime__details__title">
+                                    <h3>{{ movie.title }}</h3>
+                                    <span>{{ tmdbd.tagline }}</span>
                                 </div>
-                                <span>1.029 Votes</span>
-                            </div>
+
+                                <div id="v-rating" data-movie-id="{{ movie.id }}" data-user-id="{{ user.id }}"></div>
+                                
+                            </div> 
                             <p>
                                 {{ movie.description }}
                             </p>
@@ -62,43 +59,50 @@
                                 <div class="row">
                                     <div class="col-lg-6 col-md-6">
                                         <ul>
-                                            <li><span>Тип:</span>Фильм</li>
                                             <li><span>Актёры:</span>
                                                 {% for i in movie.get_actors %}
-                                                    {{ i.name }},
-                                                {% endfor %}
-                                            </li>
-                                            <li><span>Создатели:</span>
-                                                {% for i in movie.get_creators %}
-                                                    {{ i.name }},
+                                                    <a href="{% url 'person_details' i.id %}">
+                                                        {{ i.name }}{% if not forloop.last %}, {% endif %}
+                                                   </a>
+                                                   {% endfor %}
+                                                </li>
+                                                <li><span>Создатели:</span>
+                                                    {% for i in movie.get_creators %}
+                                                    <a href="{% url 'person_details' i.id %}">
+                                                        {{ i.name }}{% if not forloop.last %}, {% endif %}
+                                                   </a>
                                                 {% endfor %}
                                             </li>
                                             
                                             <li><span>Дата выхода:</span>{{ movie.release_date }}</li>
                                             <li><span>Жанры:</span>
                                                 {% for i in movie.genres.all %}
-                                                    {{ i.name }},
+                                                    {{ i.name }}{% if not forloop.last %}, {% endif %}
                                                 {% endfor %}
                                             </li>
                                         </ul>
                                     </div>
                                     <div class="col-lg-6 col-md-6">
                                         <ul>
-                                            <li><span>Scores:</span> 7.31 / 1,515</li>
-                                            <li><span>длительность:</span> {{ movie.get_duration_display }}</li>
+                                            {% if movie.duration %}
+                                                <li><span>Длительность:</span> {{ movie.get_duration_display }}</li>  
+                                            {% endif %}
                                             <li><span>Страна:</span>
                                                     {{ movie.country.name }}
                                             </li>
+                                            <li><span> Рейтинг: </span> {{ movie.average_rating | floatformat:1 }}</li>
                                             <li><span>Все просмотры:</span> {{ movie.all_views }}</li>
                                         </ul>
                                     </div>
                                 </div>
                             </div>
-                            <div class="anime__details__btn">
-                                <a href="#" class="follow-btn"><i class="fa fa-heart-o"></i> Follow</a>
-                                <a href="#" class="watch-btn"><span>Watch Now</span> <i
-                                    class="fa fa-angle-right"></i></a>
-                                </div>
+                            <div class="anime__details__btn row">
+                                <div id="v-watchlist-btn" data-user-id="{{ user.id }}" data-movie-id="{{ movie.id }}"></div>
+                                
+                                {% if is_video %}
+                                <a href="{% url 'movie_watching' movie.id %}" class="watch-btn"><span>Смотреть</span> <i class="fa fa-angle-right"></i></a>
+                                {% endif %}
+                            </div>
                             </div>
                         </div>
                     </div>
@@ -114,11 +118,17 @@
                             <div class="section-title">
                                 <h5>Вам может понравиться</h5>
                             </div>
-                             {% for i in tmdbr %}
-                                <div class="product__sidebar__view__item set-bg" data-setbg="http://image.tmdb.org/t/p/original{{ i.poster_path }}">
-                                    <div class="ep">{{ i.vote_average }}</div>
-                                    <div class="view"><i class="fa fa-eye"></i> 9141</div>
-                                    <h5><a href="{% url 'movie_details' i.id %}">{{ i.title }}</a></h5>
+                             {% for m in recommendations %}
+                                <div class="product__sidebar__view__item set-bg" data-setbg="{{ m.poster.url }}">
+                                    <div class="wrap"></div>
+                                    {% if m.average_rating %}
+                                    <div class="ep">{{ m.average_rating }}</div>
+                                    {% endif %}
+                                    {% if m.user_rating %}
+                                    <div class="ep bg-info" style="right: 10px; left: auto; top: 45px">{{ m.user_rating }}</div>
+                                    {% endif %}
+                                    <div class="view"><i class="fa fa-eye"></i> {{ m.views.count }}</div>
+                                    <h5><a href="{% url 'movie_details' m.id %}">{{ m.title }}</a></h5>
                                 </div>
                             {% endfor %}
                         </div>
@@ -130,5 +140,8 @@
 
 {% endblock %}
 
-
+{% block importjs %}
+<script src="{% static 'js/vue.watchlist-btn.js'%}"></script>
+<script src="{% static 'js/vue.rating.js'%}"></script>
+{% endblock %}
 

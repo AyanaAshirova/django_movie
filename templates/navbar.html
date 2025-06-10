@@ -9,39 +9,45 @@
             <div class="col-lg-2">
                 <div class="header__logo">
                     <a href="{% url 'home' %}">
-                        <img src="{% static 'img/logo.png' %}" alt="">
+                        <!-- <img src="{% static 'img/logo.png' %}" alt=""> -->
+                         Watch<span>Movie</span> 
                     </a>
                 </div>
             </div>
-            <div class="col-lg-4">
+            <div class="col-lg-6">
                 <div class="header__nav">
                     <nav class="header__menu mobile-menu">
                         <ul>
-                            <li><a href="{% url 'home' %}">Главная</a></li>
-                            <li><a href="#">   Категории  </a>
+                            <li class="{% if request.path == '/' %} active {% endif %}"><a href="{% url 'home' %}">Главная</a></li>
+                            <li class="{% if '/filter/' in request.path  %} active {% endif %}"><a href="{% url 'filter' %}">Фильтр</a></li>
+
+                            <li class="{% if '/categories/' in request.path %} active {% endif %}"><a href="#">   Категории <i class="arrow_carrot-down"></i> </a>
                                <ul class="dropdown">
                                 {% get_genres as genres %}
                                    {% for i in genres %}
                                        <li><a href="{% url 'categories' i.id %}">{{ i.name }}</a></li>
                                    {% endfor %}
+                               </ul>
                             </li>
                         </ul>
                     </nav>
                 </div>
             </div>
-            <div class="col-lg-3 py-3">
-                <form action="{% url 'movie_search' %}" class="row" method="get">
-                    <input type="search"  name="searchinput" placeholder="Search.." style="border: none; padding: 3px;">
-                    <button type="submit"  style="border: none; background-color: #fff; "><i class="fa fa-search"></i></button>
-                </form>
+            <div class="col-lg-1 py-3">
+                <a href="#" class="search-switch"><span class="icon_search"></span></a>
             </div>
             <div class="col-lg-3">
-                <div class="header__right">
+                <div class="header__right {% if request.path == '/profile/' %}active{% endif %}">
                     {% if user.username %}
-                        <span id="user" class="col-lg-1 text">
+                        <a id="user" href="{% url 'profile' %}" class=" text d-inline">
                             {{ user.username }} <span class="icon_profile"></span>
-                        </span> 
-                        <a href="{% url 'account_logout' %}">Выйти</a>
+                        </a>
+                        <form action="{% url 'logout' %}" method="post" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="">Выйти</button>
+                        </form>
+
+                        <!-- <a href="{% url 'account_logout' %}">Выйти</a> -->
                     {% else %}
                         <a href="{% url 'account_login' %}">Войти</a>
                     {% endif %}

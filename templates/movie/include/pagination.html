@@ -1,0 +1,30 @@
+{% if page_obj.has_other_pages %}
+<div class="product__pagination">
+    {% for p in paginator.page_range %}
+        {% if page_obj.number == p %}
+        <span href="#" class="current-page">{{ p }}</span>
+        {% elif p >= page_obj.number|add:-1 and p <= page_obj.number|add:1 %}
+        <a href="?page={{ p }}">{{ p }}</a></li>
+        {% elif p >= page_obj.number|add:-2 and p <= page_obj.number|add:2 %}
+            {% if p > page_obj.number %}
+            <a href="?page={{ p }}" aria-label="Next" class="next">
+                <i class="fa fa-angle-double-right"></i>
+            </a>
+            {% else %}
+            <a href="?page={{ p }}" aria-label="Previous" class="prev">
+                <i class="fa fa-angle-double-left"></i>
+            </a>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+ </div>
+
+{% endif %}
+<!-- <div class="product__pagination">
+    <a href="#" class="current-page">1</a>
+    <a href="#">2</a>
+    <a href="#">3</a>
+    <a href="#">4</a>
+    <a href="#">5</a>
+    <a href="#"><i class="fa fa-angle-double-right"></i></a>
+</div> -->

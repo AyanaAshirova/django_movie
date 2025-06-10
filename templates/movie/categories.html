@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 
+{% block title %}
+<title> Категории </title>
+{% endblock %}
+
 {% block content %}
 
     {% load static %}
@@ -34,29 +38,23 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-4 col-md-4 col-sm-6">
-                                    <div class="product__page__filter">
-                                        <p>Сортировать по:</p>
-                                        <select>
-                                            <option value="">A-Z</option>
-                                            <option value="">1-10</option>
-                                            <option value="">10-50</option>
-                                        </select>
-                                    </div>
+                                    {% include 'movie/include/sort.html' %}
                                 </div>
                             </div>
                         </div>
 
-                            {% include 'movie/include/movie-list.html' %}
+                            {% if movie_list %}
+                            <div class="recent__product">
+                                <div class="row">
+                                    {% for m in movie_list %}
+                                        {% include 'movie/include/movie-item.html' %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endif %}
             
                     </div>
-                    <div class="product__pagination">
-                        <a href="#" class="current-page">1</a>
-                        <a href="#">2</a>
-                        <a href="#">3</a>
-                        <a href="#">4</a>
-                        <a href="#">5</a>
-                        <a href="#"><i class="fa fa-angle-double-right"></i></a>
-                    </div>
+                    {% include 'movie/include/pagination.html' %}
                 </div>
                 <div class="col-lg-4 col-md-6 col-sm-8">
                     {% include 'movie/include/product-sidebar.html' %}

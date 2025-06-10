@@ -1,0 +1,22 @@
+<div class="col-lg-4 col-md-6 col-sm-6">
+    <div class="product__item">
+        <div class="product__item__pic set-bg" data-setbg="{{ m.poster.url }}">
+            {% if m.get_average_rating %}
+            <div class="ep">{{ m.average_rating }}</div>
+            {% endif %}
+            {% if m.user_rating %}
+            <div class="ep bg-info" style="right: 10px; left: auto;">{{ m.user_rating }}</div>
+            {% endif %}
+            <div class="comment"><i class="fa fa-comments"></i> {{ m.comments.count }}</div>
+            <div class="view"><i class="fa fa-eye"></i> {{ m.views.all.count }}</div>
+        </div>
+        <div class="product__item__text">
+            <ul>
+            {% for g in m.genres.all %}
+                <li>{{ g.name }}</li>
+                {% endfor %}
+            </ul>
+            <h5><a href="{% url 'movie_details' m.id %}">{{ m.title }}</a></h5>
+        </div>
+    </div>
+</div>

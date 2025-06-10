@@ -88,7 +88,7 @@
     /*------------------
         Niceselect
     --------------------*/
-    $('select').niceSelect();
+    // $('select').niceSelect();
 
     /*------------------
         Scroll To Top
@@ -116,6 +116,16 @@
 //        console.log('toggle')
 //        $(this).target.parentElement.matches('.reply-comment-form').classList.toggle('active');
 //    });
+    $('#sort').on('change', function () {
+            let sortValue = $(this).val();
+            if (sortValue) {
+                let currentUrl = new URL(window.location.href);
+                currentUrl.searchParams.set('sort', sortValue);
+                window.location.href = currentUrl.toString();
+            }
+        });
+
+
 
 })(jQuery);
 
@@ -136,4 +146,10 @@ function previewImage() {
     }
 }
 
+
+function getCookie(name) {
+const value = `; ${document.cookie}`
+const parts = value.split(`; ${name}=`)
+if (parts.length === 2) return parts.pop().split(';').shift()
+}
 
