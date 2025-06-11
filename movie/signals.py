@@ -15,6 +15,12 @@ def save_recommendations(sender, instance, created, **kwargs):
 
 
 @receiver(post_save, sender=VideoStream)
+def generate_master_playlist_after_encoding(sender, instance, **kwargs):
+    if instance.status == VideoStream.COMPLETED:
+        instance.movie.generate_master_playlist()
+
+
+@receiver(post_save, sender=VideoStream)
 def add_thumbnail_and_video_duration(sender, instance, created, **kwargs):
     if instance:
         duration = get_video_duration(instance.video.path)
