@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-@0!6g8l!f67bkobw5_lv6#m_8@)yfj$oh5^385+7bn6-1wq024
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['37.252.19.106', ]
 
 
 
@@ -169,10 +169,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-]
+STATIC_URL = '/static/'
+# STATICFILES_DIRS = [
+#    os.path.join(BASE_DIR, 'static'),
+# ]
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
@@ -187,13 +188,13 @@ AUTH_USER_MODEL = 'users.User'
 
 
 # celery information
-CELERY_BROKER_URL = "redis://localhost:6379/0"
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
 # CELERY_BROKER_URL  = 'redis://localhost:6379'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 CELERY_ACCEPT_CONTENT = ['application/json']
 # CELERY_ACCEPT_CONTENT = ['json']
 
 CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
+# CELERY_RESULT_SERIALIZER = 'json'
 
 CELERY_TIMEZONE = 'Asia/Bishkek'
