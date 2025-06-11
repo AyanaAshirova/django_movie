@@ -95,7 +95,7 @@ class HLSVideoPlayer(DetailView):
         # context['hls_url'] = reverse('serve_hls_playlist', args=[movie.id])
         context['hls_master_url'] = movie.hls_master
         
-        watchlist = WatchList.objects.get_or_create(user=self.request.user, name=WatchList.HISTORY)
+        watchlist, created = WatchList.objects.get_or_create(user=self.request.user, name=WatchList.HISTORY)
         WatchListItem.objects.get_or_create(movie=movie, user=self.request.user, watchlist=watchlist)
 
         return context
