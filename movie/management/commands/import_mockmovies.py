@@ -30,15 +30,6 @@ class Command(BaseCommand):
             role, _ = Role.objects.get_or_create(name=name)
             role_objects[name] = role
 
-        # Пример людей и ролей
-        people_data = [
-            {'name': 'Иван Иванов', 'role': 'актёр'},
-            {'name': 'Иван Иванов', 'role': 'режиссёр'},
-            {'name': 'Мария Смирнова', 'role': 'продюсер'},
-            {'name': 'Дмитрий Петров', 'role': 'оператор'},
-        ]
-
-
 
         # Пример фильмов
         movies = [
