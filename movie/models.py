@@ -147,14 +147,12 @@ class Movie(models.Model):
     
         
     def generate_master_playlist(self):
-        if self.hls_master:
-            return self.hls_master
-        
         import os
         from .models import VideoStream
         movie_id = self.id
 
-        base_dir = os.path.join(settings.MEDIA_ROOT, f"{settings.HLS_DIR_NAME}/{movie_id}")
+
+        base_dir = os.path.join(settings.MEDIA_ROOT, f'{settings.HLS_DIR_NAME}/{movie_id}')
         master_path = os.path.join(base_dir, 'master.m3u8')
 
         streams = VideoStream.objects.filter(movie_id=movie_id, status=VideoStream.COMPLETED)
@@ -168,7 +166,7 @@ class Movie(models.Model):
         with open(master_path, 'w') as f:
             f.write('\n'.join(lines))
         
-        hls = f"hls-output/{movie_id}/master.m3u8"
+        hls = f'media/{settings.HLS_DIR_NAME}/{movie_id}/master.m3u8'
         self.hls_master = hls
         self.save(update_fields=['hls_master'])
         
