@@ -166,7 +166,7 @@ class Movie(models.Model):
         with open(master_path, 'w') as f:
             f.write('\n'.join(lines))
         
-        hls = f'media/{settings.HLS_DIR_NAME}/{movie_id}/master.m3u8'
+        hls = f'/media/{settings.HLS_DIR_NAME}/{movie_id}/master.m3u8'
         self.hls_master = hls
         self.save(update_fields=['hls_master'])
         
