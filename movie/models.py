@@ -17,7 +17,7 @@ class Role(models.Model):
 
 class Person(models.Model):
     name = models.CharField(max_length=1000, verbose_name='Имя')
-    photo = models.ImageField(upload_to=f'persons/{name}/', verbose_name='Фотографии', default='persons/default.jpg/')
+    photo = models.ImageField(upload_to=f'persons/{name}/', verbose_name='Фотографии', default='defaults/person.jpg')
 
     def __str__(self):
         return self.name
@@ -82,12 +82,12 @@ class Movie(models.Model):
     country = models.ForeignKey(Country, on_delete=models.DO_NOTHING, related_name='movies')
     premium = models.BooleanField(default=False)
     price = models.PositiveBigIntegerField(null=True, blank=True)
-    poster = models.ImageField(upload_to='movies/posters/', blank=True, null=True, default='movies/default-poster.jpg',)
+    poster = models.ImageField(upload_to='movies/posters/', blank=True, null=True, default='defaults/poster.jpg',)
     genres = models.ManyToManyField(Genre, verbose_name='Жанры', related_name='movie')
     description = models.TextField(max_length=10000, null=True, blank=True, verbose_name='Описание')
     duration = models.PositiveBigIntegerField(verbose_name='Длительность в секундах', blank=True, null=True)
     persons = models.ManyToManyField(Person, through=MoviePerson,verbose_name='Участники фильма')
-    bg_photo = models.ImageField(upload_to='movies/bg_photos/',default='movies/default-bg.jpg', blank=True, null=True)
+    bg_photo = models.ImageField(upload_to='movies/bg_photos/',default='defaults/default-bg.jpg', blank=True, null=True)
     trailer_url = models.URLField(verbose_name='Ссылка на трейлер')
 
     recommendations = models.ManyToManyField('self', symmetrical=False, blank=True,)

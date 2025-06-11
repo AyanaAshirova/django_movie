@@ -8,7 +8,7 @@ class User(AbstractUser):
 
     def save(self, *args, **kwargs):
         if not self.avatar:
-            self.avatar = f'avatars/default-{randint(1, 5)}.jpg'
+            self.avatar = f'defaults/avatar-{randint(1, 3)}.jpg'
         super().save(*args, **kwargs)
 
 
