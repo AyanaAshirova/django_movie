@@ -12,7 +12,7 @@ from movie.serializers import PostRatingSerializer, RatingSerializer
 
 
 class UserProfileView(TemplateView):
-    template_name = 'Account/profile.html'
+    template_name = 'account/profile.html'
 
 class UserRatingApiView(APIView):
     def post(self, request, movie_id):

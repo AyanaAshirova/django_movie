@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+
+ {% block title %}
+    <title>Профиль</title>
+{% endblock %}
+
+{% block content %}
+
+<section class="edit__profile__section">
+    <div class="container">
+        <div class="row mb-3">
+            <div class="col-lg-12 text-center mb-3">
+                <h4>Профиль</h4>
+            </div>
+
+
+            <div class="col-lg-6 col-md-12">
+
+                <div id="v-watchlists" data-user-id="{{ user.id }}"></div>
+
+            </div>
+        </div>
+    </div>
+
+</section>
+{% endblock %}
+
+{% block importjs %}
+<script src="{% static 'js/vue.watchlist-tab.js'%}"></script>
+{% endblock %}
