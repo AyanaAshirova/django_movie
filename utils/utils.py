@@ -12,7 +12,7 @@ def get_video_duration(file_path):
         '-show_streams',
         '-i', file_path
     ]
-    result = subprocess.run(cmd_duration, shell=False, check=True, stdout=subprocess.PIPE)
+    result = subprocess.run(cmd_duration, shell=False, check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     output_json = json.loads(result.stdout)
     video_length = None
     try:
@@ -43,7 +43,7 @@ def get_video_thumbnail(video_path):
         output_thumbnail_path
     ]
     try:
-        subprocess.run(cmd_thumbnail, check=True)
+        subprocess.run(cmd_thumbnail, check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError as e:
         print(f"Thumbnail generation failed with return code {e.returncode}")
         print(f"Command: {e.cmd}")

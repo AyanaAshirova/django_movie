@@ -99,7 +99,7 @@ def video_encode(duration, steam_id):
                 output_hls_path
             ]
 
-            subprocess.run(cmd, check=True)
+            subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
 
             stream.hls_path = f"{settings.HLS_DIR_NAME}/{stream.movie.id}/{stream.resolution}/playlist.m3u8"
