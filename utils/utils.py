@@ -6,7 +6,7 @@ from django.conf import settings
 
 def get_video_duration(file_path):
     cmd_duration = [
-        'ffprobe',
+        '/usr/bin/ffprobe',
         '-v', 'quiet',
         '-print_format', 'json',
         '-show_streams',
@@ -32,7 +32,7 @@ def get_video_thumbnail(video_path):
     os.makedirs(output_dir, exist_ok=True)
     
     cmd_thumbnail = [
-        'ffmpeg',
+        '/usr/bin/ffmpeg',
         '-ss', '1',
         '-i', video_path,
         '-frames:v', '1',

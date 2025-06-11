@@ -81,7 +81,7 @@ def video_encode(duration, steam_id):
         #     output_hls_path
         # ]
             cmd = [
-                'ffmpeg',
+                '/usr/bin/ffmpeg',
                 '-i', input_video_path,
                 '-vf', f'scale=-2:{stream.resolution}',
                 '-c:a', 'aac',
