@@ -240,7 +240,7 @@ class PersonRolesApiView(APIView):
     def get(self, request, person_id):
         try:
             person = get_object_or_404(Person, id=person_id)
-            roles = Role.objects.filter(movie_person__person=person).distinct()
+            roles = Role.objects.filter(movie_person__person=person)
             roles_serializer = RoleSerializer(roles, many=True)
 
             return Response(roles_serializer.data, status=status.HTTP_200_OK)
