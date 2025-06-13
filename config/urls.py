@@ -9,7 +9,6 @@ from movie.views import  *
 from users.views import *
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
     path('profile/', include('users.urls')),
 
