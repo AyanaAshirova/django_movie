@@ -138,7 +138,7 @@ class Movie(models.Model):
         return Person.objects.filter(movie_person__movie=self, movie_person__role__name='актёр')
 
     def get_creators(self):
-        return Person.objects.filter(movie_person__movie=self).distinct()
+        return Person.objects.filter(movie_person__movie=self).exclude(movie_person__role__name='актёр').distinct()
     
     def get_recommended_movies(self):
         return Movie.objects\
