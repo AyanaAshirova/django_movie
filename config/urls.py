@@ -15,11 +15,6 @@ urlpatterns = [
 
     path('comments/', include('comment.urls')),
     path('', include('movie.urls')),
-
-
-    path('serve_hls_master/<int:pk>/', serve_hls_master, name='serve_hls_master'),
-    path('serve_hls_playlist/<int:pk>/', serve_hls_playlist, name='serve_hls_playlist'),
-    path('serve_hls_segment/<int:pk>/<str:segment_name>/',serve_hls_segment, name='serve_hls_segment'),
     
 
     path('api/v1/movies/<int:movie_id>/comments/', MovieCommentListApiView.as_view(), name='movie-comments'),

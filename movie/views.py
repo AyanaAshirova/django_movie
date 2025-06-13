@@ -28,58 +28,7 @@ from django.http import FileResponse, HttpResponse
 from django.urls import reverse
 from .tasks import video_encode
 from django.contrib.auth.decorators import login_required
-
-
-
-def serve_hls_master(request, pk):
-    try:
-        video = get_object_or_404(Movie, pk=pk)
-        hls_master_path = video.hls_master
-
-        with open(hls_master_path, 'r') as m3u8_file:
-            m3u8_content = m3u8_file.read()
-
-        base_url = request.build_absolute_uri('/') 
-        serve_hls_master_url = base_url + "serve_hls_playlist/" + str(pk)
-        m3u8_content = m3u8_content.replace('{{ dynamic_path }}', serve_hls_master_url)
-
-        return HttpResponse(m3u8_content, content_type='application/vnd.apple.mpegurl')
-    except (Movie.DoesNotExist, FileNotFoundError):
-        return HttpResponse("Video or HLS master playlist not found", status=404)
-
-
-def serve_hls_playlist(request, pk):
-    try:
-        stream = VideoStream.objects.filter(movie__id=pk).first
-        if stream:
-            hls_playlist_path = stream.video.hls_path
-
-            with open(hls_playlist_path, 'r') as m3u8_file:
-                m3u8_content = m3u8_file.read()
-
-            base_url = request.build_absolute_uri('/') 
-            serve_hls_segment_url = base_url +"serve_hls_segment/" +str(pk)
-            m3u8_content = m3u8_content.replace('{{ dynamic_path }}', serve_hls_segment_url)
-
-
-            return HttpResponse(m3u8_content, content_type='application/vnd.apple.mpegurl')
-    except (Movie.DoesNotExist, FileNotFoundError):
-        return HttpResponse("Video or HLS playlist not found", status=404)
-
-
-def serve_hls_segment(request, pk, segment_name):
-    try:
-        movie = get_object_or_404(Movie, pk=pk)
-        print(movie)
-        hls_directory = os.path.join(os.path.dirname(movie.video_4k.path), 'hls_output')
-        print('**********', hls_directory)
-        segment_path = os.path.join(hls_directory, segment_name)
-        print('**********', segment_path)
-
-        # Serve the HLS segment as a binary file response
-        return FileResponse(open(segment_path, 'rb'))
-    except (Movie.DoesNotExist, FileNotFoundError):
-        return HttpResponse("Video or HLS segment not found", status=404)
+from django.conf import settings
 
 
 
@@ -94,7 +43,7 @@ class HLSVideoPlayer(DetailView):
         # context['hls_url'] = reverse('serve_hls_playlist', args=[movie.id])
         if not movie.hls_master: 
             movie.generate_master_playlist()
-        context['hls_master_url'] = movie.hls_master
+        context['hls_master_url'] = f'{settings.MEDIA_URL}{movie.hls_master}'
         
         watchlist, created = WatchList.objects.get_or_create(user=self.request.user, name=WatchList.HISTORY)
         WatchListItem.objects.get_or_create(movie=movie, user=self.request.user, watchlist=watchlist)
