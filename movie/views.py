@@ -44,9 +44,11 @@ class HLSVideoPlayer(DetailView):
         if not movie.hls_master: 
             movie.generate_master_playlist()
         context['hls_master_url'] = f'{settings.MEDIA_URL}{movie.hls_master}'
-        if self.request.user.is_authenticated:
-            watchlist, created = WatchList.objects.get_or_create(user=self.request.user, name=WatchList.HISTORY)
-            WatchListItem.objects.get_or_create(movie=movie, user=self.request.user, watchlist=watchlist)
+
+        user = self.request.user
+        if user.is_authenticated:
+            watchlist, _ = WatchList.objects.get_or_create(user=user, name=WatchList.HISTORY)
+            WatchListItem.objects.get_or_create(movie=movie, user=user, watchlist=watchlist)
 
         return context
     
